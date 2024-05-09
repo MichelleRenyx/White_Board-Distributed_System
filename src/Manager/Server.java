@@ -11,6 +11,8 @@ public class Server {
     private static int clientId = 0;
     public static void launchServer(String address, int port, String username) {
         Connection c1 = null;
+        ServerSocket server = null;
+        users.add(username);
         try {
             server = new ServerSocket(port);
             Socket client;
@@ -18,7 +20,7 @@ public class Server {
                 client = server.accept();
                 clientId++;
                 System.out.println("Client " + clientId + " request to connect");
-                c1 = new Connection(client, clientId);
+                c1 = new Connection(client);
                 connections.add(c1);
 
                 c1.start();

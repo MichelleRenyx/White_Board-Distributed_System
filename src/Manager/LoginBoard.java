@@ -1,21 +1,23 @@
+/*
+ * Created by JFormDesigner on Thu May 09 11:54:58 AEST 2024
+ */
+
 package Manager;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import javax.swing.*;
+import net.miginfocom.swing.*;
 
-
+/**
+ * @author yuxinr
+ */
 public class LoginBoard {
     static String address;
     static int port;
     static String Username;
-    private JFrame frame;
-    private JButton loginButton;
-    private JTextField textField;
-    private JLabel nameLabel;
-    private JLabel MyWhiteBoard;
-    public static ManagerBoard createMyBoard;
+    static String name;
+    static ManagerBoard createMyBoard;
 
     public static void main(String[] args) {
         if (args.length == 3) {
@@ -41,47 +43,66 @@ public class LoginBoard {
 
         Server.launchServer(address, port, Username);
     }
-
     public LoginBoard() {
-        initialize();
+        initComponents();
     }
-    private void initialize() {
-        // TODO: place custom component creation code here
-        frame = new JFrame("MyWhiteBoard");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setBounds(1000, 500, 450, 300);
-        frame.getContentPane().setLayout(null);
 
-        nameLabel = new JLabel("Username:");
-        nameLabel.setBounds(200, 200, 100, 50);
-        frame.getContentPane().add(nameLabel);
+    private void login(ActionEvent e) {
+        // TODO add your code here
+        name = textField.getText();
+        myWhiteBoard.dispose();
+        try {
+            createMyBoard = new ManagerBoard(name);
+            createMyBoard.setFrame(createMyBoard);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
+    private void initComponents() {
+        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
+        // Generated using JFormDesigner Educational license - Yuxin Ren
+        myWhiteBoard = new JFrame();
+        nameLabel = new JLabel();
         textField = new JTextField();
-        textField.setBounds(100, 100, 300, 50);
-        frame.getContentPane().add(textField);
+        loginButton = new JButton();
 
-        loginButton = new JButton("LOGIN");
-        loginButton.setBounds(200, 25, 100, 50);
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("Login")) {
-                    username = textField.getText();
-                    frame.dispose();
-                    try {
-                        createMyBoard = new ManagerBoard(textField);
-                        createMyBoard.setFrame(createMyBoard);
+        //======== myWhiteBoard ========
+        {
+            var myWhiteBoardContentPane = myWhiteBoard.getContentPane();
+            myWhiteBoardContentPane.setLayout(new MigLayout(
+                "hidemode 3",
+                // columns
+                "[fill]" +
+                "[fill]" +
+                "[fill]" +
+                "[156,fill]",
+                // rows
+                "[]" +
+                "[63]" +
+                "[44]" +
+                "[]"));
 
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                        System.out.println("loginButton Error");
-                    }
-                }
-            }
-        });
+            //---- nameLabel ----
+            nameLabel.setText("Username");
+            myWhiteBoardContentPane.add(nameLabel, "cell 0 1 2 1");
+            myWhiteBoardContentPane.add(textField, "cell 2 1 2 1");
 
-        frame.getContentPane().add(loginButton);
-        frame.getContentPane().setLayout(null);
-        frame.setVisible(true);
+            //---- loginButton ----
+            loginButton.setText("LOGIN");
+            loginButton.addActionListener(e -> login(e));
+            myWhiteBoardContentPane.add(loginButton, "cell 2 3");
+            myWhiteBoard.pack();
+            myWhiteBoard.setLocationRelativeTo(myWhiteBoard.getOwner());
+        }
+        // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
+
+    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
+    // Generated using JFormDesigner Educational license - Yuxin Ren
+    private JFrame myWhiteBoard;
+    private JLabel nameLabel;
+    private JTextField textField;
+    private JButton loginButton;
+    // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }

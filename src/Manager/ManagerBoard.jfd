@@ -1,0 +1,45 @@
+JFDML JFormDesigner: "8.2.1.0.348" Java: "17.0.5" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "hidemode 3"
+			"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill]"
+			"$rowConstraints": "[][][][]"
+		} ) {
+			name: "managerBoard"
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "menu"
+				"model": new javax.swing.DefaultComboBoxModel {
+					selectedItem: "Save"
+					addElement( "Save" )
+					addElement( "SaveAs" )
+					addElement( "Open" )
+					addElement( "Exit" )
+				}
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menu", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 13 0"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "clearButton"
+				"text": "CLEAR"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "clear", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 13 1"
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane1"
+				add( new FormComponent( "javax.swing.JList" ) {
+					name: "userList"
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 13 3"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 400, 300 )
+		} )
+	}
+}
