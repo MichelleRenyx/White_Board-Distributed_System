@@ -1,0 +1,44 @@
+JFDML JFormDesigner: "8.2.1.0.348" Java: "17.0.5" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "hidemode 3"
+			"$columnConstraints": "[93,fill][278,fill]"
+			"$rowConstraints": "[64][][18][][][]"
+		} ) {
+			name: "frameOpenFile"
+			auxiliary() {
+				"JavaCodeGenerator.variableModifiers": 1
+			}
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "pathLabel"
+				"text": "Input File Path"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "pathTextField"
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 1"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "openButton"
+				"text": "OPEN"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "openListener", true ) )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 1 3"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "txtNotExistField"
+				"visible": false
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 5 2 1"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 400, 300 )
+		} )
+	}
+}

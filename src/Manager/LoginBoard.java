@@ -30,8 +30,12 @@ public class LoginBoard {
                 System.exit(1);
             }
         } else {
-            System.out.println("Input format Error");
-            System.exit(1);
+            address = "localhost";
+            port = 6666;
+            Username = "default";
+            System.out.println("Default address: localhost, port: 6666, user name: default");
+//            System.out.println("Input format Error");
+//            System.exit(1);
         }
         EventQueue.invokeLater(() -> {
             try {

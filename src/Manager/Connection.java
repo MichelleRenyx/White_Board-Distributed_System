@@ -97,6 +97,7 @@ public class Connection extends Thread {
 
                     case "draw":
                         ConnectionManager.broadcast(receivedJson);
+                        ConnectionManager.canvasRepaint(receivedJson);
                         break;
                     case "over":
                         socket.close();
@@ -126,32 +127,22 @@ public class Connection extends Thread {
 
     private void clientLeave() {
         // Remove the client and their information
-        Server.connections.remove(this);
-        Server.users.remove(name);
-
-        //Prepare JSON object to notify other clients
-        JsonObject notificationJson = new JsonObject();
-        notificationJson.addProperty("type", "clientOut");
-        notificationJson.addProperty("disconnectedUser", name);
-
-        JsonArray remainingUsers = new JsonArray();
-        for (String userName : Server.users) {
-            remainingUsers.add(userName);
+        JsonObject message = new JsonObject();
+        message.addProperty("command", "clientout");
+        message.addProperty("username", name);
+        message.addProperty("message", name + " has left the board.");
+        try {
+            ConnectionManager.broadcast(message);
+        } catch (Exception e) {
+            System.out.println("Error in Connection clientLeave broadcast method");
+            e.printStackTrace();
         }
-        notificationJson.add("remainingUsers", remainingUsers);
-
-        //Convert JSON object to string and broadcast to all clients
-        String notificationString = new Gson().toJson(notificationJson);
-        for (Connection st : Server.connections) {
-            try {
-                st.dataOutputStream.writeUTF(notificationString);
-                st.dataOutputStream.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            ConnectionManager.clientOut(message);
+        } catch (Exception e1) {
+            System.out.println("Error in Connection clientLeave clientOut method)");
+            e1.printStackTrace();
         }
-
-        ConnectionManager.clientOut(notificationJson);  // Pass relevant part or modify as per actual use-case
     }
 
 }
