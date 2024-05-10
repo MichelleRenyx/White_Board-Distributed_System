@@ -31,23 +31,7 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
     }
 
     public void update(JsonObject drawRecord) {
-        records.add(drawRecord);
-        String type = drawRecord.get("type").getAsString();
-        String command = drawRecord.get("command").getAsString();
-        int startX = drawRecord.get("startX").getAsInt();
-        int startY = drawRecord.get("startY").getAsInt();
-        int endX = drawRecord.get("endX").getAsInt();
-        int endY = drawRecord.get("endY").getAsInt();
-        String color = drawRecord.get("color").getAsString();
-/*JsonObject drawCommand = new JsonObject();
-drawCommand.addProperty("type", "draw");
-drawCommand.addProperty("command", "line");
-drawCommand.addProperty("startX", 100);
-drawCommand.addProperty("startY", 100);
-drawCommand.addProperty("endX", 200);
-drawCommand.addProperty("endY", 200);
-drawCommand.addProperty("color", "red");*/
-        // Handle drawing logic here
+        // Update the canvas with the new drawing
     }
 
 
@@ -58,19 +42,29 @@ drawCommand.addProperty("color", "red");*/
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals("color")) {
-            color = JColorChooser.showDialog(frame, "Choose a color", color);
-            JFrame colorFrame = new JFrame("Color");
-            colorFrame.setSize(200, 200);
-            colorFrame.setVisible(true);
-            colorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            colorFrame.setLocationRelativeTo(null);
-            Color currentColor = JColorChooser.showDialog(colorFrame, "Choose a color", color);
-            if(currentColor != null) {
-                color = currentColor;
+//        if(e.getActionCommand().equals("color")) {
+//            color = JColorChooser.showDialog(frame, "Choose a color", color);
+//            JFrame colorFrame = new JFrame("Color");
+//            colorFrame.setSize(200, 200);
+//            colorFrame.setVisible(true);
+//            colorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//            colorFrame.setLocationRelativeTo(null);
+//            Color currentColor = color;
+//            if(currentColor != null) {
+//                color = currentColor;
+//            }
+//        } else {
+//            this.type = e.getActionCommand();
+//        }
+        if ("color".equals(e.getActionCommand())) {
+            Color curColor = JColorChooser.showDialog(frame, "Choose a color", color);
+            if (curColor != null) {
+                color = curColor;
+                drawRecord.addProperty("color", color.getRGB());
             }
         } else {
-            this.type = e.getActionCommand();
+            type = e.getActionCommand();
+            drawRecord.addProperty("type", (String) type);
         }
     }
 
@@ -193,14 +187,11 @@ drawCommand.addProperty("color", "red");*/
                 graphics2D.drawRect(Math.min(startX, endX), Math.min(startY,endY), Math.abs(startX - endX), Math.abs(startY - endY));
                 break;
             case "oval":
-                int width = Math.abs(endX - startX);
-                int height = Math.abs(endY - startY);
-                graphics2D.drawOval(startX, startY, width, height*2);
+                graphics2D.drawOval(startX, startY, Math.abs(endX - startX), Math.abs(endY - startY));
                 break;
             case "circle":
-                graphics2D.drawOval(startX, startY, endX, endY);
                 int d = (int) Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-                graphics2D.drawOval(startX, startY, d, d);
+                graphics2D.drawOval(startX, startY, d*2, d*2);
                 break;
             case "text":
                 // Handle text drawing logic here
@@ -230,8 +221,15 @@ drawCommand.addProperty("color", "red");*/
         drawRecord.addProperty("startY", startY);
         drawRecord.addProperty("endX", endX);
         drawRecord.addProperty("endY", endY);
-        drawRecord.addProperty("color", color.toString());
+        drawRecord.addProperty("color", color.getRGB());
+        if ("text".equals(type)) {
+            drawRecord.addProperty("text", JOptionPane.showInputDialog(frame, "Enter your text"));
+            drawRecord.addProperty("fontSize", 20);
+        }
         records.add(drawRecord);
     }
 
+    public void setGraphic(Graphics g) {
+        this.graphics2D = (Graphics2D) g;
+    }
 }

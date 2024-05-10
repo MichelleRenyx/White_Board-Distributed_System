@@ -104,7 +104,7 @@ public class Connection extends Thread {
                         break;
                     case "clear":
                         ManagerBoard.canvas.removeAll();
-                        ManagerBoard.canvas.update();
+                        ManagerBoard.canvas.update( ManagerBoard.canvas.getGraphics());
                         ManagerBoard.createBoardListener.clearRecords();
                         break;
                 }

@@ -22,10 +22,12 @@ import net.miginfocom.swing.*;
  * @author yuxinr
  */
 public class ManagerBoard {
+    public JFrame managerBoard;
     public static StringWriter chatArea;
-    static Listener createBoardListener = new Listener();
+    static Listener createBoardListener;
     private String file = ".save/whiteboard";
     static ManagerBoard createMyBoard;
+
     static CanvasPainter canvas;
     //static Graphics2D canvasGraphics;
 
@@ -37,6 +39,182 @@ public class ManagerBoard {
 
     public int showRequest(String guestName) {
         return JOptionPane.showConfirmDialog(null, guestName + "want to join your white board", "Request", JOptionPane.INFORMATION_MESSAGE);
+    }
+    private void initComponents(String name){
+
+
+        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
+        // Generated using JFormDesigner Educational license - Yuxin Ren
+        managerBoard = new JFrame("White Board - MANAGER - " + name);
+        createBoardListener = new Listener(managerBoard);
+        lineButton = new JButton();
+        drawingBoard = new JPanel();
+        menu = new JComboBox<>();
+        recButton = new JButton();
+        circleButton = new JButton();
+        scrollPane1 = new JScrollPane();
+        userList = new JList();
+        ovalButton = new JButton();
+        penButton = new JButton();
+        textButton = new JButton();
+        colorButton = new JButton();
+        scrollPane2 = new JScrollPane();
+        chatTextArea = new JTextArea();
+        eraserButton = new JButton();
+        clearButton = new JButton();
+        chatInputTextField = new JTextField();
+        sendButton = new JButton();
+
+
+        canvas = new CanvasPainter();
+        canvas.setBackground(Color.white);
+        canvas.addMouseListener(createBoardListener);
+        canvas.addMouseMotionListener(createBoardListener);
+        createBoardListener.setGraphic(canvas.getGraphics());
+        //======== managerBoard ========
+        {
+            var managerBoardContentPane = managerBoard.getContentPane();
+            managerBoardContentPane.setLayout(new MigLayout(
+                    "hidemode 3",
+                    // columns
+                    "[75,fill]" +
+                            "[335,fill]" +
+                            "[60,fill]",
+                    // rows
+                    "[31]" +
+                            "[]" +
+                            "[]" +
+                            "[]" +
+                            "[]0" +
+                            "[]" +
+                            "[]0" +
+                            "[]" +
+                            "[]" +
+                            "[]" +
+                            "[]" +
+                            "[]" +
+                            "[]" +
+                            "[]" +
+                            "[]" +
+                            "[]" +
+                            "[]"));
+
+            //======== drawingBoard ========
+            {
+                drawingBoard.setAutoscrolls(true);
+                drawingBoard.setBackground(Color.white);
+                drawingBoard.setLayout(new BorderLayout());
+                drawingBoard.add(canvas, BorderLayout.CENTER);
+
+                {
+                    // compute preferred size
+                    Dimension preferredSize = new Dimension();
+                    for(int i = 0; i < drawingBoard.getComponentCount(); i++) {
+                        Rectangle bounds = drawingBoard.getComponent(i).getBounds();
+                        preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+                        preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+                    }
+                    Insets insets = drawingBoard.getInsets();
+                    preferredSize.width += insets.right;
+                    preferredSize.height += insets.bottom;
+                    drawingBoard.setMinimumSize(preferredSize);
+                    drawingBoard.setPreferredSize(preferredSize);
+                }
+            }
+            managerBoardContentPane.add(drawingBoard, "cell 1 0 1 8,grow");
+
+            //---- menu ----
+            menu.setModel(new DefaultComboBoxModel<>(new String[] {
+                    "Save",
+                    "SaveAs",
+                    "Open",
+                    "Exit"
+            }));
+            menu.addActionListener(e -> menu(e));
+            managerBoardContentPane.add(menu, "cell 2 0");
+
+            //---- lineButton ----
+            lineButton.setText("line");
+            lineButton.setActionCommand("line");
+            lineButton.addActionListener(createBoardListener);
+            managerBoardContentPane.add(lineButton, "cell 0 0");
+
+            //---- recButton ----
+            recButton.setText("rectangle");
+            recButton.setActionCommand("rectangle");
+            recButton.addActionListener(createBoardListener);
+            managerBoardContentPane.add(recButton, "cell 0 1");
+
+            //---- circleButton ----
+            circleButton.setText("circle");
+            circleButton.setActionCommand("circle");
+            circleButton.addActionListener(createBoardListener);
+            managerBoardContentPane.add(circleButton, "cell 0 2");
+
+            //---- ovalButton ----
+            ovalButton.setText("oval");
+            ovalButton.setActionCommand("oval");
+            ovalButton.addActionListener(createBoardListener);
+            managerBoardContentPane.add(ovalButton, "cell 0 3");
+
+            //---- penButton ----
+            penButton.setText("pen");
+            ovalButton.setActionCommand("pen");
+            penButton.addActionListener(createBoardListener);
+            managerBoardContentPane.add(penButton, "cell 0 5");
+
+            //---- textButton ----
+            textButton.setText("text");
+            textButton.setActionCommand("text");
+            textButton.addActionListener(createBoardListener);
+            managerBoardContentPane.add(textButton, "cell 0 7");
+
+            //---- colorButton ----
+            colorButton.setText("color");
+            colorButton.setActionCommand("color");
+            colorButton.addActionListener(createBoardListener);
+            managerBoardContentPane.add(colorButton, "cell 0 8");
+
+            //---- eraserButton ----
+            eraserButton.setText("eraser");
+            eraserButton.setActionCommand("eraser");
+            eraserButton.addActionListener(createBoardListener);
+            managerBoardContentPane.add(eraserButton, "cell 0 9");
+
+            //---- clearButton ----
+            clearButton.setText("CLEAR");
+            clearButton.addActionListener(e -> clear(e));
+            managerBoardContentPane.add(clearButton, "cell 0 10");
+
+
+            //---- sendButton ----
+            sendButton.setText("SEND");
+            sendButton.addActionListener(createBoardListener);
+            managerBoardContentPane.add(sendButton, "cell 2 10");
+
+            //======== scrollPane1 ========
+            {
+                scrollPane1.setViewportView(userList);
+            }
+            managerBoardContentPane.add(scrollPane1, "cell 2 1 1 9,growy");
+
+            //======== scrollPane2 ========
+            {
+
+                //---- chatTextArea ----
+                chatTextArea.setEditable(false);
+                scrollPane2.setViewportView(chatTextArea);
+            }
+            managerBoardContentPane.add(scrollPane2, "cell 1 8 1 2,growy");
+
+            managerBoardContentPane.add(chatInputTextField, "cell 1 10");
+
+            managerBoard.pack();
+            managerBoard.setLocationRelativeTo(null);
+            managerBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            managerBoard.setVisible(true);
+        }
+        // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 
     private void menu(ActionEvent e) {
@@ -89,7 +267,9 @@ public class ManagerBoard {
         // TODO add your code here
 
         canvas.removeAll();
-        canvas.update();
+        canvas.update(canvas.getGraphics());
+
+
         createBoardListener.clearRecords();
 
         JsonObject clearCommand = new JsonObject();
@@ -102,184 +282,13 @@ public class ManagerBoard {
         }
     }
 
-    private void initComponents(String name){
-        canvas = new CanvasPainter();
-        canvas.setBackground(Color.white);
 
-
-            // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
-            // Generated using JFormDesigner Educational license - Yuxin Ren
-            managerBoard = new JFrame("White Board - MANAGER - " + name);
-            lineButton = new JButton();
-            drawingBoard = new JPanel();
-            menu = new JComboBox<>();
-            recButton = new JButton();
-            circleButton = new JButton();
-            scrollPane1 = new JScrollPane();
-            userList = new JList();
-            ovalButton = new JButton();
-            penButton = new JButton();
-            textButton = new JButton();
-            colorButton = new JButton();
-            scrollPane2 = new JScrollPane();
-            chatTextArea = new JTextArea();
-            eraserButton = new JButton();
-            clearButton = new JButton();
-            chatInputTextField = new JTextField();
-            sendButton = new JButton();
-
-            //======== managerBoard ========
-            {
-                var managerBoardContentPane = managerBoard.getContentPane();
-                managerBoardContentPane.setLayout(new MigLayout(
-                    "hidemode 3",
-                    // columns
-                    "[75,fill]" +
-                    "[335,fill]" +
-                    "[60,fill]",
-                    // rows
-                    "[31]" +
-                    "[]" +
-                    "[]" +
-                    "[]" +
-                    "[]0" +
-                    "[]" +
-                    "[]0" +
-                    "[]" +
-                    "[]" +
-                    "[]" +
-                    "[]" +
-                    "[]" +
-                    "[]" +
-                    "[]" +
-                    "[]" +
-                    "[]" +
-                    "[]"));
-
-                //======== drawingBoard ========
-                {
-                    drawingBoard.setAutoscrolls(true);
-                    drawingBoard.setBackground(Color.white);
-                    drawingBoard.setLayout(new BorderLayout());
-                    drawingBoard.add(canvas, BorderLayout.CENTER);
-
-                    {
-                        // compute preferred size
-                        Dimension preferredSize = new Dimension();
-                        for(int i = 0; i < drawingBoard.getComponentCount(); i++) {
-                            Rectangle bounds = drawingBoard.getComponent(i).getBounds();
-                            preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-                            preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-                        }
-                        Insets insets = drawingBoard.getInsets();
-                        preferredSize.width += insets.right;
-                        preferredSize.height += insets.bottom;
-                        drawingBoard.setMinimumSize(preferredSize);
-                        drawingBoard.setPreferredSize(preferredSize);
-                    }
-                }
-                managerBoardContentPane.add(drawingBoard, "cell 1 0 1 8,grow");
-
-                //---- menu ----
-                menu.setModel(new DefaultComboBoxModel<>(new String[] {
-                    "Save",
-                    "SaveAs",
-                    "Open",
-                    "Exit"
-                }));
-                menu.addActionListener(e -> menu(e));
-                managerBoardContentPane.add(menu, "cell 2 0");
-
-                //---- lineButton ----
-                lineButton.setText("line");
-                lineButton.setActionCommand("line");
-                lineButton.addActionListener(createBoardListener);
-                managerBoardContentPane.add(lineButton, "cell 0 0");
-
-                //---- recButton ----
-                recButton.setText("rectangle");
-                recButton.setActionCommand("rectangle");
-                recButton.addActionListener(createBoardListener);
-                managerBoardContentPane.add(recButton, "cell 0 1");
-
-                //---- circleButton ----
-                circleButton.setText("circle");
-                circleButton.setActionCommand("circle");
-                circleButton.addActionListener(createBoardListener);
-                managerBoardContentPane.add(circleButton, "cell 0 2");
-
-                //---- ovalButton ----
-                ovalButton.setText("oval");
-                ovalButton.setActionCommand("oval");
-                ovalButton.addActionListener(createBoardListener);
-                managerBoardContentPane.add(ovalButton, "cell 0 3");
-
-                //---- penButton ----
-                penButton.setText("pen");
-                ovalButton.setActionCommand("pen");
-                penButton.addActionListener(createBoardListener);
-                managerBoardContentPane.add(penButton, "cell 0 5");
-
-                //---- textButton ----
-                textButton.setText("text");
-                textButton.setActionCommand("text");
-                textButton.addActionListener(createBoardListener);
-                managerBoardContentPane.add(textButton, "cell 0 7");
-
-                //---- colorButton ----
-                colorButton.setText("color");
-                colorButton.setActionCommand("color");
-                colorButton.addActionListener(createBoardListener);
-                managerBoardContentPane.add(colorButton, "cell 0 8");
-
-                //---- eraserButton ----
-                eraserButton.setText("eraser");
-                eraserButton.setActionCommand("eraser");
-                eraserButton.addActionListener(createBoardListener);
-                managerBoardContentPane.add(eraserButton, "cell 0 9");
-
-                //---- clearButton ----
-                clearButton.setText("CLEAR");
-                clearButton.addActionListener(e -> clear(e));
-                managerBoardContentPane.add(clearButton, "cell 0 10");
-
-
-                //---- sendButton ----
-                sendButton.setText("SEND");
-                sendButton.addActionListener(createBoardListener);
-                managerBoardContentPane.add(sendButton, "cell 2 10");
-
-                //======== scrollPane1 ========
-                {
-                    scrollPane1.setViewportView(userList);
-                }
-                managerBoardContentPane.add(scrollPane1, "cell 2 1 1 9,growy");
-
-                //======== scrollPane2 ========
-                {
-
-                    //---- chatTextArea ----
-                    chatTextArea.setEditable(false);
-                    scrollPane2.setViewportView(chatTextArea);
-                }
-                managerBoardContentPane.add(scrollPane2, "cell 1 8 1 2,growy");
-
-                managerBoardContentPane.add(chatInputTextField, "cell 1 10");
-
-                managerBoard.pack();
-                managerBoard.setLocationRelativeTo(null);
-                managerBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                managerBoard.setVisible(true);
-            }
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
-    }
 
     private void textListener(ActionEvent e) {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
     // Generated using JFormDesigner Educational license - Yuxin Ren
-    private JFrame managerBoard;
     private JButton lineButton;
     private JPanel drawingBoard;
     private JComboBox<String> menu;
