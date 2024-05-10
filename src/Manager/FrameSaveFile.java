@@ -73,7 +73,9 @@ public class FrameSaveFile {
             saveButton.addActionListener(e -> saveListener(e));
             frameSaveAsContentPane.add(saveButton, "cell 2 5");
             frameSaveAs.pack();
-            frameSaveAs.setLocationRelativeTo(frameSaveAs.getOwner());
+            frameSaveAs.setLocationRelativeTo(null);
+            frameSaveAs.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frameSaveAs.setVisible(true);
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }

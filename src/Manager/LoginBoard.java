@@ -97,7 +97,9 @@ public class LoginBoard {
             loginButton.addActionListener(e -> login(e));
             myWhiteBoardContentPane.add(loginButton, "cell 2 3");
             myWhiteBoard.pack();
-            myWhiteBoard.setLocationRelativeTo(myWhiteBoard.getOwner());
+            myWhiteBoard.setLocationRelativeTo(null); // Center on screen
+            myWhiteBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            myWhiteBoard.setVisible(true); // Make sure to make the window visible
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }

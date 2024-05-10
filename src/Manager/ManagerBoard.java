@@ -105,37 +105,29 @@ public class ManagerBoard {
 
     private void line(ActionEvent e) {
         // TODO add your code here
-        createBoardListener.setDrawingType("line");
     }
-
     private void recListener(ActionEvent e) {
         // TODO add your code here
-        createBoardListener.setDrawingType("rectangle");
     }
 
     private void circleListener(ActionEvent e) {
         // TODO add your code here
-        createBoardListener.setDrawingType("circle");
     }
 
     private void ovalListener(ActionEvent e) {
         // TODO add your code here
-        createBoardListener.setDrawingType("oval");
     }
 
     private void penListener(ActionEvent e) {
         // TODO add your code here
-        createBoardListener.setDrawingType("pen");
     }
 
     private void colorListener(ActionEvent e) {
         // TODO add your code here
-        createBoardListener.setDrawingType("color");
     }
 
     private void eraserListener(ActionEvent e) {
         // TODO add your code here
-        createBoardListener.setDrawingType("eraser");
     }
 
     private void initComponents(String name){
@@ -261,7 +253,9 @@ public class ManagerBoard {
                 clearButton.addActionListener(e -> clear(e));
                 managerBoardContentPane.add(clearButton, "cell 0 9");
                 managerBoard.pack();
-                managerBoard.setLocationRelativeTo(managerBoard.getOwner());
+                managerBoard.setLocationRelativeTo(null);
+                managerBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                managerBoard.setVisible(true); // Make sure to make the window visible
             }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
@@ -298,7 +292,7 @@ public class ManagerBoard {
         g.setColor(Color.white);
         g.fillRect(0, 0, width, height);
 
-        canvas.draw(g, createBoardListener.getRecords());
+        //canvas.draw(g, createBoardListener.getRecords());
         try {
             // 根据用户选择的格式保存图像
             if (type.equals("jpg")) {
