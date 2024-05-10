@@ -14,6 +14,7 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
     JsonObject drawRecord = new JsonObject();
     Graphics2D graphics2D;
     int startX, startY, endX, endY;
+    String text;
     static Color color = Color.BLACK;
     Object type = "line";
     public Listener(){}
@@ -42,20 +43,6 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-//        if(e.getActionCommand().equals("color")) {
-//            color = JColorChooser.showDialog(frame, "Choose a color", color);
-//            JFrame colorFrame = new JFrame("Color");
-//            colorFrame.setSize(200, 200);
-//            colorFrame.setVisible(true);
-//            colorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//            colorFrame.setLocationRelativeTo(null);
-//            Color currentColor = color;
-//            if(currentColor != null) {
-//                color = currentColor;
-//            }
-//        } else {
-//            this.type = e.getActionCommand();
-//        }
         if ("color".equals(e.getActionCommand())) {
             Color curColor = JColorChooser.showDialog(frame, "Choose a color", color);
             if (curColor != null) {
@@ -64,7 +51,9 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
             }
         } else {
             type = e.getActionCommand();
-            drawRecord.addProperty("type", (String) type);
+            Cursor cursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+            frame.setCursor(cursor);
+            drawRecord.addProperty("type", type.toString());
         }
     }
 
@@ -187,7 +176,9 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
                 graphics2D.drawRect(Math.min(startX, endX), Math.min(startY,endY), Math.abs(startX - endX), Math.abs(startY - endY));
                 break;
             case "oval":
-                graphics2D.drawOval(startX, startY, Math.abs(endX - startX), Math.abs(endY - startY));
+                int width = Math.abs(endX - startX);
+                int height = Math.abs(endY - startY);
+                graphics2D.drawOval(startX, startY, width, height);
                 break;
             case "circle":
                 int d = (int) Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
@@ -195,7 +186,7 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
                 break;
             case "text":
                 // Handle text drawing logic here
-                String text = JOptionPane.showInputDialog(frame, "Enter your text");
+                text = JOptionPane.showInputDialog(frame, "Enter your text");
                 if(text != null) {
                     Font font = new Font(null, Font.PLAIN, 20);
                     graphics2D.setFont(font);
@@ -223,7 +214,7 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
         drawRecord.addProperty("endY", endY);
         drawRecord.addProperty("color", color.getRGB());
         if ("text".equals(type)) {
-            drawRecord.addProperty("text", JOptionPane.showInputDialog(frame, "Enter your text"));
+            drawRecord.addProperty("text", text);
             drawRecord.addProperty("fontSize", 20);
         }
         records.add(drawRecord);

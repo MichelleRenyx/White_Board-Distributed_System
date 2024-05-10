@@ -136,6 +136,7 @@ public class ManagerBoard {
             //---- lineButton ----
             lineButton.setText("line");
             lineButton.setActionCommand("line");
+            lineButton.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             lineButton.addActionListener(createBoardListener);
             managerBoardContentPane.add(lineButton, "cell 0 0");
 
