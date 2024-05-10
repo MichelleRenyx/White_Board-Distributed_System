@@ -20,9 +20,6 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
     public Listener(JFrame frame) {
         this.frame = frame;
     }
-    public void setDrawingType(Object type) {
-        this.type = type;
-    }
 
 
     public void clearRecords() {

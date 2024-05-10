@@ -23,8 +23,7 @@ import net.miginfocom.swing.*;
  */
 public class ManagerBoard {
     public static StringWriter chatArea;
-    static Listener createBoardListener;
-    public JFrame frame;
+    static Listener createBoardListener = new Listener();
     private String file = ".save/whiteboard";
     static ManagerBoard createMyBoard;
     static CanvasPainter canvas;
@@ -103,43 +102,14 @@ public class ManagerBoard {
         }
     }
 
-    private void line(ActionEvent e) {
-        // TODO add your code here
-    }
-    private void recListener(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void circleListener(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void ovalListener(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void penListener(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void colorListener(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void eraserListener(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void sendListener(ActionEvent e) {
-        // TODO add your code here
-    }
-
     private void initComponents(String name){
         canvas = new CanvasPainter();
+        canvas.setBackground(Color.white);
+
 
             // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
             // Generated using JFormDesigner Educational license - Yuxin Ren
-            managerBoard = new JFrame();
+            managerBoard = new JFrame("White Board - MANAGER - " + name);
             lineButton = new JButton();
             drawingBoard = new JPanel();
             menu = new JComboBox<>();
@@ -186,16 +156,12 @@ public class ManagerBoard {
                     "[]" +
                     "[]"));
 
-                //---- lineButton ----
-                lineButton.setText("line");
-                lineButton.addActionListener(e -> line(e));
-                managerBoardContentPane.add(lineButton, "cell 0 0");
-
                 //======== drawingBoard ========
                 {
                     drawingBoard.setAutoscrolls(true);
                     drawingBoard.setBackground(Color.white);
-                    drawingBoard.setLayout(null);
+                    drawingBoard.setLayout(new BorderLayout());
+                    drawingBoard.add(canvas, BorderLayout.CENTER);
 
                     {
                         // compute preferred size
@@ -224,41 +190,70 @@ public class ManagerBoard {
                 menu.addActionListener(e -> menu(e));
                 managerBoardContentPane.add(menu, "cell 2 0");
 
+                //---- lineButton ----
+                lineButton.setText("line");
+                lineButton.setActionCommand("line");
+                lineButton.addActionListener(createBoardListener);
+                managerBoardContentPane.add(lineButton, "cell 0 0");
+
                 //---- recButton ----
                 recButton.setText("rectangle");
-                recButton.addActionListener(e -> recListener(e));
+                recButton.setActionCommand("rectangle");
+                recButton.addActionListener(createBoardListener);
                 managerBoardContentPane.add(recButton, "cell 0 1");
 
                 //---- circleButton ----
                 circleButton.setText("circle");
-                circleButton.addActionListener(e -> circleListener(e));
+                circleButton.setActionCommand("circle");
+                circleButton.addActionListener(createBoardListener);
                 managerBoardContentPane.add(circleButton, "cell 0 2");
+
+                //---- ovalButton ----
+                ovalButton.setText("oval");
+                ovalButton.setActionCommand("oval");
+                ovalButton.addActionListener(createBoardListener);
+                managerBoardContentPane.add(ovalButton, "cell 0 3");
+
+                //---- penButton ----
+                penButton.setText("pen");
+                ovalButton.setActionCommand("pen");
+                penButton.addActionListener(createBoardListener);
+                managerBoardContentPane.add(penButton, "cell 0 5");
+
+                //---- textButton ----
+                textButton.setText("text");
+                textButton.setActionCommand("text");
+                textButton.addActionListener(createBoardListener);
+                managerBoardContentPane.add(textButton, "cell 0 7");
+
+                //---- colorButton ----
+                colorButton.setText("color");
+                colorButton.setActionCommand("color");
+                colorButton.addActionListener(createBoardListener);
+                managerBoardContentPane.add(colorButton, "cell 0 8");
+
+                //---- eraserButton ----
+                eraserButton.setText("eraser");
+                eraserButton.setActionCommand("eraser");
+                eraserButton.addActionListener(createBoardListener);
+                managerBoardContentPane.add(eraserButton, "cell 0 9");
+
+                //---- clearButton ----
+                clearButton.setText("CLEAR");
+                clearButton.addActionListener(e -> clear(e));
+                managerBoardContentPane.add(clearButton, "cell 0 10");
+
+
+                //---- sendButton ----
+                sendButton.setText("SEND");
+                sendButton.addActionListener(createBoardListener);
+                managerBoardContentPane.add(sendButton, "cell 2 10");
 
                 //======== scrollPane1 ========
                 {
                     scrollPane1.setViewportView(userList);
                 }
                 managerBoardContentPane.add(scrollPane1, "cell 2 1 1 9,growy");
-
-                //---- ovalButton ----
-                ovalButton.setText("oval");
-                ovalButton.addActionListener(e -> ovalListener(e));
-                managerBoardContentPane.add(ovalButton, "cell 0 3");
-
-                //---- penButton ----
-                penButton.setText("pen");
-                penButton.addActionListener(e -> penListener(e));
-                managerBoardContentPane.add(penButton, "cell 0 5");
-
-                //---- textButton ----
-                textButton.setText("text");
-                textButton.addActionListener(e -> textListener(e));
-                managerBoardContentPane.add(textButton, "cell 0 7");
-
-                //---- colorButton ----
-                colorButton.setText("color");
-                colorButton.addActionListener(e -> colorListener(e));
-                managerBoardContentPane.add(colorButton, "cell 0 8");
 
                 //======== scrollPane2 ========
                 {
@@ -269,21 +264,8 @@ public class ManagerBoard {
                 }
                 managerBoardContentPane.add(scrollPane2, "cell 1 8 1 2,growy");
 
-                //---- eraserButton ----
-                eraserButton.setText("eraser");
-                eraserButton.addActionListener(e -> eraserListener(e));
-                managerBoardContentPane.add(eraserButton, "cell 0 9");
-
-                //---- clearButton ----
-                clearButton.setText("CLEAR");
-                clearButton.addActionListener(e -> clear(e));
-                managerBoardContentPane.add(clearButton, "cell 0 10");
                 managerBoardContentPane.add(chatInputTextField, "cell 1 10");
 
-                //---- sendButton ----
-                sendButton.setText("SEND");
-                sendButton.addActionListener(e -> sendListener(e));
-                managerBoardContentPane.add(sendButton, "cell 2 10");
                 managerBoard.pack();
                 managerBoard.setLocationRelativeTo(null);
                 managerBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
