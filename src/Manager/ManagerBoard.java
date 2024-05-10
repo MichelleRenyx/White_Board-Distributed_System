@@ -130,12 +130,16 @@ public class ManagerBoard {
         // TODO add your code here
     }
 
+    private void sendListener(ActionEvent e) {
+        // TODO add your code here
+    }
+
     private void initComponents(String name){
         canvas = new CanvasPainter();
 
             // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
             // Generated using JFormDesigner Educational license - Yuxin Ren
-            managerBoard = new JFrame("whiteboard(manager) - " + name);
+            managerBoard = new JFrame();
             lineButton = new JButton();
             drawingBoard = new JPanel();
             menu = new JComboBox<>();
@@ -147,8 +151,12 @@ public class ManagerBoard {
             penButton = new JButton();
             textButton = new JButton();
             colorButton = new JButton();
+            scrollPane2 = new JScrollPane();
+            chatTextArea = new JTextArea();
             eraserButton = new JButton();
             clearButton = new JButton();
+            chatInputTextField = new JTextField();
+            sendButton = new JButton();
 
             //======== managerBoard ========
             {
@@ -156,16 +164,17 @@ public class ManagerBoard {
                 managerBoardContentPane.setLayout(new MigLayout(
                     "hidemode 3",
                     // columns
-                    "[fill]" +
-                    "[393,fill]" +
-                    "[fill]",
+                    "[75,fill]" +
+                    "[335,fill]" +
+                    "[60,fill]",
                     // rows
                     "[31]" +
                     "[]" +
                     "[]" +
                     "[]" +
+                    "[]0" +
                     "[]" +
-                    "[]" +
+                    "[]0" +
                     "[]" +
                     "[]" +
                     "[]" +
@@ -185,17 +194,25 @@ public class ManagerBoard {
                 //======== drawingBoard ========
                 {
                     drawingBoard.setAutoscrolls(true);
-                    drawingBoard.setLayout(new MigLayout(
-                        "hidemode 3",
-                        // columns
-                        "[fill]" +
-                        "[fill]",
-                        // rows
-                        "[]" +
-                        "[]" +
-                        "[]"));
+                    drawingBoard.setBackground(Color.white);
+                    drawingBoard.setLayout(null);
+
+                    {
+                        // compute preferred size
+                        Dimension preferredSize = new Dimension();
+                        for(int i = 0; i < drawingBoard.getComponentCount(); i++) {
+                            Rectangle bounds = drawingBoard.getComponent(i).getBounds();
+                            preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+                            preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+                        }
+                        Insets insets = drawingBoard.getInsets();
+                        preferredSize.width += insets.right;
+                        preferredSize.height += insets.bottom;
+                        drawingBoard.setMinimumSize(preferredSize);
+                        drawingBoard.setPreferredSize(preferredSize);
+                    }
                 }
-                managerBoardContentPane.add(drawingBoard, "cell 1 0 1 7");
+                managerBoardContentPane.add(drawingBoard, "cell 1 0 1 8,grow");
 
                 //---- menu ----
                 menu.setModel(new DefaultComboBoxModel<>(new String[] {
@@ -221,7 +238,7 @@ public class ManagerBoard {
                 {
                     scrollPane1.setViewportView(userList);
                 }
-                managerBoardContentPane.add(scrollPane1, "cell 2 1 1 8");
+                managerBoardContentPane.add(scrollPane1, "cell 2 1 1 9,growy");
 
                 //---- ovalButton ----
                 ovalButton.setText("oval");
@@ -236,26 +253,41 @@ public class ManagerBoard {
                 //---- textButton ----
                 textButton.setText("text");
                 textButton.addActionListener(e -> textListener(e));
-                managerBoardContentPane.add(textButton, "cell 0 6");
+                managerBoardContentPane.add(textButton, "cell 0 7");
 
                 //---- colorButton ----
                 colorButton.setText("color");
                 colorButton.addActionListener(e -> colorListener(e));
-                managerBoardContentPane.add(colorButton, "cell 0 7");
+                managerBoardContentPane.add(colorButton, "cell 0 8");
+
+                //======== scrollPane2 ========
+                {
+
+                    //---- chatTextArea ----
+                    chatTextArea.setEditable(false);
+                    scrollPane2.setViewportView(chatTextArea);
+                }
+                managerBoardContentPane.add(scrollPane2, "cell 1 8 1 2,growy");
 
                 //---- eraserButton ----
                 eraserButton.setText("eraser");
                 eraserButton.addActionListener(e -> eraserListener(e));
-                managerBoardContentPane.add(eraserButton, "cell 0 8");
+                managerBoardContentPane.add(eraserButton, "cell 0 9");
 
                 //---- clearButton ----
                 clearButton.setText("CLEAR");
                 clearButton.addActionListener(e -> clear(e));
-                managerBoardContentPane.add(clearButton, "cell 0 9");
+                managerBoardContentPane.add(clearButton, "cell 0 10");
+                managerBoardContentPane.add(chatInputTextField, "cell 1 10");
+
+                //---- sendButton ----
+                sendButton.setText("SEND");
+                sendButton.addActionListener(e -> sendListener(e));
+                managerBoardContentPane.add(sendButton, "cell 2 10");
                 managerBoard.pack();
                 managerBoard.setLocationRelativeTo(null);
                 managerBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                managerBoard.setVisible(true); // Make sure to make the window visible
+                managerBoard.setVisible(true);
             }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
@@ -277,8 +309,12 @@ public class ManagerBoard {
     private JButton penButton;
     private JButton textButton;
     private JButton colorButton;
+    private JScrollPane scrollPane2;
+    private JTextArea chatTextArea;
     private JButton eraserButton;
     private JButton clearButton;
+    private JTextField chatInputTextField;
+    private JButton sendButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 
 

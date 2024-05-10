@@ -68,6 +68,8 @@ public class FrameOpenFile {
             frameOpenFileContentPane.add(txtNotExistField, "cell 0 5 2 1");
             frameOpenFile.pack();
             frameOpenFile.setLocationRelativeTo(null);
+            frameOpenFile.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frameOpenFile.setVisible(true);
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
