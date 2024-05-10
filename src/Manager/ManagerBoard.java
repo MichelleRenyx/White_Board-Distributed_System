@@ -28,7 +28,8 @@ public class ManagerBoard {
     private String file = ".save/whiteboard";
     static ManagerBoard createMyBoard;
     static CanvasPainter canvas;
-    public static int circleX, circleY;
+    //static Graphics2D canvasGraphics;
+
     private int width = 800, height = 600;
 
     public ManagerBoard(String managerName) {
@@ -87,6 +88,7 @@ public class ManagerBoard {
 
     private void clear(ActionEvent e) {
         // TODO add your code here
+
         canvas.removeAll();
         canvas.update();
         createBoardListener.clearRecords();
@@ -100,56 +102,56 @@ public class ManagerBoard {
             System.out.println("Error in ManagerBoard clearMethod");
         }
     }
+
     private void line(ActionEvent e) {
         // TODO add your code here
+        createBoardListener.setDrawingType("line");
     }
 
     private void recListener(ActionEvent e) {
         // TODO add your code here
+        createBoardListener.setDrawingType("rectangle");
     }
 
     private void circleListener(ActionEvent e) {
         // TODO add your code here
+        createBoardListener.setDrawingType("circle");
     }
 
     private void ovalListener(ActionEvent e) {
         // TODO add your code here
-    }
-
-    private void triangleListener(ActionEvent e) {
-        // TODO add your code here
+        createBoardListener.setDrawingType("oval");
     }
 
     private void penListener(ActionEvent e) {
         // TODO add your code here
-    }
-
-    private void textListener(ActionEvent e) {
-        // TODO add your code here
+        createBoardListener.setDrawingType("pen");
     }
 
     private void colorListener(ActionEvent e) {
         // TODO add your code here
+        createBoardListener.setDrawingType("color");
     }
 
     private void eraserListener(ActionEvent e) {
         // TODO add your code here
+        createBoardListener.setDrawingType("eraser");
     }
 
     private void initComponents(String name){
+        canvas = new CanvasPainter();
+
             // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
             // Generated using JFormDesigner Educational license - Yuxin Ren
-            managerBoard = new JFrame();
+            managerBoard = new JFrame("whiteboard(manager) - " + name);
             lineButton = new JButton();
-            panel1 = new JPanel();
+            drawingBoard = new JPanel();
             menu = new JComboBox<>();
             recButton = new JButton();
-            drawingBoard = new JPanel();
             circleButton = new JButton();
             scrollPane1 = new JScrollPane();
             userList = new JList();
             ovalButton = new JButton();
-            triangleButton = new JButton();
             penButton = new JButton();
             textButton = new JButton();
             colorButton = new JButton();
@@ -163,19 +165,16 @@ public class ManagerBoard {
                     "hidemode 3",
                     // columns
                     "[fill]" +
-                    "[54,fill]" +
-                    "[fill]" +
-                    "[fill]" +
-                    "[fill]" +
-                    "[fill]" +
-                    "[fill]" +
-                    "[fill]" +
-                    "[fill]" +
-                    "[fill]" +
-                    "[fill]" +
+                    "[393,fill]" +
                     "[fill]",
                     // rows
                     "[31]" +
+                    "[]" +
+                    "[]" +
+                    "[]" +
+                    "[]" +
+                    "[]" +
+                    "[]" +
                     "[]" +
                     "[]" +
                     "[]" +
@@ -191,34 +190,9 @@ public class ManagerBoard {
                 lineButton.addActionListener(e -> line(e));
                 managerBoardContentPane.add(lineButton, "cell 0 0");
 
-                //======== panel1 ========
-                {
-                    panel1.setLayout(new MigLayout(
-                        "hidemode 3",
-                        // columns
-                        "[54,fill]",
-                        // rows
-                        "[]"));
-                }
-                managerBoardContentPane.add(panel1, "cell 1 0");
-
-                //---- menu ----
-                menu.setModel(new DefaultComboBoxModel<>(new String[] {
-                    "Save",
-                    "SaveAs",
-                    "Open",
-                    "Exit"
-                }));
-                menu.addActionListener(e -> menu(e));
-                managerBoardContentPane.add(menu, "cell 11 0");
-
-                //---- recButton ----
-                recButton.setText("rectangle");
-                recButton.addActionListener(e -> recListener(e));
-                managerBoardContentPane.add(recButton, "cell 0 1");
-
                 //======== drawingBoard ========
                 {
+                    drawingBoard.setAutoscrolls(true);
                     drawingBoard.setLayout(new MigLayout(
                         "hidemode 3",
                         // columns
@@ -229,7 +203,22 @@ public class ManagerBoard {
                         "[]" +
                         "[]"));
                 }
-                managerBoardContentPane.add(drawingBoard, "cell 1 1 9 8");
+                managerBoardContentPane.add(drawingBoard, "cell 1 0 1 7");
+
+                //---- menu ----
+                menu.setModel(new DefaultComboBoxModel<>(new String[] {
+                    "Save",
+                    "SaveAs",
+                    "Open",
+                    "Exit"
+                }));
+                menu.addActionListener(e -> menu(e));
+                managerBoardContentPane.add(menu, "cell 2 0");
+
+                //---- recButton ----
+                recButton.setText("rectangle");
+                recButton.addActionListener(e -> recListener(e));
+                managerBoardContentPane.add(recButton, "cell 0 1");
 
                 //---- circleButton ----
                 circleButton.setText("circle");
@@ -240,17 +229,12 @@ public class ManagerBoard {
                 {
                     scrollPane1.setViewportView(userList);
                 }
-                managerBoardContentPane.add(scrollPane1, "cell 11 1 1 8");
+                managerBoardContentPane.add(scrollPane1, "cell 2 1 1 8");
 
                 //---- ovalButton ----
                 ovalButton.setText("oval");
                 ovalButton.addActionListener(e -> ovalListener(e));
                 managerBoardContentPane.add(ovalButton, "cell 0 3");
-
-                //---- triangleButton ----
-                triangleButton.setText("triangle");
-                triangleButton.addActionListener(e -> triangleListener(e));
-                managerBoardContentPane.add(triangleButton, "cell 0 4");
 
                 //---- penButton ----
                 penButton.setText("pen");
@@ -282,25 +266,28 @@ public class ManagerBoard {
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 
+    private void textListener(ActionEvent e) {
+    }
+
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
     // Generated using JFormDesigner Educational license - Yuxin Ren
     private JFrame managerBoard;
     private JButton lineButton;
-    private JPanel panel1;
+    private JPanel drawingBoard;
     private JComboBox<String> menu;
     private JButton recButton;
-    private JPanel drawingBoard;
     private JButton circleButton;
     private JScrollPane scrollPane1;
     private JList userList;
     private JButton ovalButton;
-    private JButton triangleButton;
     private JButton penButton;
     private JButton textButton;
     private JButton colorButton;
     private JButton eraserButton;
     private JButton clearButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
+
+
     public void setFrame(ManagerBoard createMyBoard) {
         this.createMyBoard = createMyBoard;
     }

@@ -37,15 +37,13 @@ public class Connection extends Thread {
                 switch (command) {
                     case "begin":
                         try {
-                            // 获取绘图记录，假设 getRecord() 现在返回一个 ArrayList<JsonObject>
                             ArrayList<JsonObject> records = LoginBoard.createMyBoard.createBoardListener.getRecords();
 
-                            // 使用 JSON 广播绘图记录
                             JsonObject drawRecords = new JsonObject();
                             drawRecords.add("records", new Gson().toJsonTree(records));
                             ConnectionManager.broadcast(drawRecords);
 
-                            // 创建 JSON 对象用于存储用户列表
+
                             JsonObject userListJson = new JsonObject();
                             JsonArray usersArray = new JsonArray();
                             for (String userName : Server.users) {
@@ -53,10 +51,8 @@ public class Connection extends Thread {
                             }
                             userListJson.add("usernames", usersArray);
 
-                            // 添加用户到 ConnectionManager
                             ConnectionManager.addUsers(userListJson);
 
-                            // 广播用户列表
                             ConnectionManager.broadcast(userListJson);
                         } catch (Exception e) {
                             e.printStackTrace();

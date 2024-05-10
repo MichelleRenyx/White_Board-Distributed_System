@@ -2,10 +2,11 @@ package Manager;
 
 import com.google.gson.JsonObject;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class CanvasPainter {
+public class CanvasPainter extends JPanel {
     public void removeAll() {
     }
 
