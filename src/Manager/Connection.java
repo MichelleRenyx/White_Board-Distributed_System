@@ -25,7 +25,7 @@ public class Connection extends Thread {
         try {
             dataInputStream = new DataInputStream(socket.getInputStream());
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
-
+            System.out.println("User connected "+ socket.getInetAddress().getHostAddress() + " " + socket.getPort());
             JsonParser parser = new JsonParser();
 
             String line;
@@ -33,7 +33,7 @@ public class Connection extends Thread {
             while ((line = dataInputStream.readUTF()) != null) {
                 JsonObject receivedJson = parser.parse(line).getAsJsonObject();  // 使用 parse 方法
                 String command = receivedJson.get("command").getAsString();
-
+                System.out.println("Received command: " + command);
                 switch (command) {
                     case "begin":
                         try {
@@ -92,6 +92,7 @@ public class Connection extends Thread {
                         break;
 
                     case "draw":
+                        System.out.println("drawing");
                         ConnectionManager.broadcast(receivedJson);
                         ConnectionManager.canvasRepaint(receivedJson);
                         break;

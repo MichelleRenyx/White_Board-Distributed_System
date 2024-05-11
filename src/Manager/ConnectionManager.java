@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class ConnectionManager {
     public static void broadcast(JsonObject message) throws IOException {
+        System.out.println("Broadcasting: " + message.toString());
         String messageString = new Gson().toJson(message);
         for (Connection st : Server.connections) {
             st.dataOutputStream.writeUTF(messageString);
@@ -67,6 +68,7 @@ drawCommand.addProperty("color", "red");*/
     }
 
     public static void canvasRepaint(JsonObject drawRecord) {
+        System.out.println("Repainting canvas"+drawRecord.toString());
         ManagerBoard.createBoardListener.update(drawRecord);
         ManagerBoard.canvas.repaint();
     }

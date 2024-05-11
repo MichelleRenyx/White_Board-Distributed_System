@@ -11,19 +11,22 @@ import java.util.Objects;
 public class Listener implements ActionListener, MouseListener, MouseMotionListener {
     JFrame frame;
     ArrayList<JsonObject> records = new ArrayList<>();
-    JsonObject drawRecord = new JsonObject();
-    Graphics2D graphics2D;
+    //JsonObject drawRecord = new JsonObject();
+    CanvasPainter canvasPainter = new CanvasPainter();
     int startX, startY, endX, endY;
     static Color color = Color.BLACK;
     Object type = "line";
     public Listener(){}
-    public Listener(JFrame frame) {
+    public Listener(JFrame frame, CanvasPainter canvasPainter) {
         this.frame = frame;
+        this.canvasPainter = canvasPainter;
     }
 
 
     public void clearRecords() {
         records.clear();
+        canvasPainter.updateRecords(records);
+        canvasPainter.repaint();
     }
 
     public ArrayList<JsonObject> getRecords() {
@@ -32,6 +35,8 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
 
     public void update(JsonObject drawRecord) {
         // Update the canvas with the new drawing
+        System.out.println("Updating canvas "+ drawRecord);
+        records.add(drawRecord);
     }
 
 
@@ -42,29 +47,13 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-//        if(e.getActionCommand().equals("color")) {
-//            color = JColorChooser.showDialog(frame, "Choose a color", color);
-//            JFrame colorFrame = new JFrame("Color");
-//            colorFrame.setSize(200, 200);
-//            colorFrame.setVisible(true);
-//            colorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//            colorFrame.setLocationRelativeTo(null);
-//            Color currentColor = color;
-//            if(currentColor != null) {
-//                color = currentColor;
-//            }
-//        } else {
-//            this.type = e.getActionCommand();
-//        }
         if ("color".equals(e.getActionCommand())) {
             Color curColor = JColorChooser.showDialog(frame, "Choose a color", color);
             if (curColor != null) {
                 color = curColor;
-                drawRecord.addProperty("color", color.getRGB());
             }
         } else {
             type = e.getActionCommand();
-            drawRecord.addProperty("type", (String) type);
         }
     }
 
@@ -97,9 +86,26 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-        endX = e.getX();
-        endY = e.getY();
-        drawShape();
+        JsonObject drawRecord = new JsonObject();
+        drawRecord.addProperty("type", type.toString());
+        drawRecord.addProperty("command", "draw");
+        drawRecord.addProperty("startX", startX);
+        drawRecord.addProperty("startY", startY);
+        drawRecord.addProperty("endX", endX);
+        drawRecord.addProperty("endY", endY);
+        drawRecord.addProperty("color", color.getRGB());
+        if ("text".equals(type)) {
+            drawRecord.addProperty("text", JOptionPane.showInputDialog(frame, "Enter your text"));
+            drawRecord.addProperty("fontSize", 20);
+        }
+        records.add(drawRecord);
+        canvasPainter.updateRecords(records);
+        canvasPainter.repaint();
+        try {
+            ConnectionManager.broadcast(drawRecord);
+        } catch (Exception ex) {
+            System.out.println("Error in Listener mouseReleased broadcast");
+        }
     }
 
     /**
@@ -139,23 +145,34 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
     public void mouseDragged(MouseEvent e) {
         endX = e.getX();
         endY = e.getY();
+        JsonObject drawRecord = new JsonObject();
         if(type.equals("pen")){
-            graphics2D.setColor(color);
-            graphics2D.setStroke(new BasicStroke(1));
-            graphics2D.drawLine(startX, startY, endX, endY);
-            recordDrawingDetails();
+            drawRecord.addProperty("type", "pen");
+            drawRecord.addProperty("color", color.getRGB());
+            drawRecord.addProperty("command", "draw");
+            drawRecord.addProperty("startX", startX);
+            drawRecord.addProperty("startY", startY);
+            drawRecord.addProperty("endX", endX);
+            drawRecord.addProperty("endY", endY);
             startX = endX;
             startY = endY;
         } else if (type.equals("eraser")) {
-            graphics2D.setColor(Color.WHITE);
-            graphics2D.setStroke(new BasicStroke(3));
-            graphics2D.drawLine(startX, startY, endX, endY);
-            recordDrawingDetails();
+
+            drawRecord.addProperty("type", "line");
+            drawRecord.addProperty("color", Color.WHITE.getRGB());
+            drawRecord.addProperty("command", "draw");
+            drawRecord.addProperty("startX", startX);
+            drawRecord.addProperty("startY", startY);
+            drawRecord.addProperty("endX", endX);
+            drawRecord.addProperty("endY", endY);
             startX = endX;
             startY = endY;
         } else {
             return;
         }
+        records.add(drawRecord);
+        canvasPainter.updateRecords(records);
+        canvasPainter.repaint();
         try{
             ConnectionManager.broadcast(drawRecord);
         } catch (Exception ex){
@@ -175,61 +192,62 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
 
     }
 
-    private void drawShape() {
-        graphics2D = (Graphics2D) frame.getGraphics();
-        graphics2D.setColor(color);
-        graphics2D.setStroke(new BasicStroke(1));
-        switch (Objects.requireNonNull(type).toString()) {
-            case "line":
-                graphics2D.drawLine(startX, startY, endX, endY);
-                break;
-            case "rectangle":
-                graphics2D.drawRect(Math.min(startX, endX), Math.min(startY,endY), Math.abs(startX - endX), Math.abs(startY - endY));
-                break;
-            case "oval":
-                graphics2D.drawOval(startX, startY, Math.abs(endX - startX), Math.abs(endY - startY));
-                break;
-            case "circle":
-                int d = (int) Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-                graphics2D.drawOval(startX, startY, d*2, d*2);
-                break;
-            case "text":
-                // Handle text drawing logic here
-                String text = JOptionPane.showInputDialog(frame, "Enter your text");
-                if(text != null) {
-                    Font font = new Font(null, Font.PLAIN, 20);
-                    graphics2D.setFont(font);
-                    graphics2D.drawString(text, endX, endY);
-                }
-                break;
-            default:
-                return;
-        }
-        recordDrawingDetails();
-        try {
-            ConnectionManager.broadcast(drawRecord);
-        } catch (Exception e) {
-            System.out.println("Error in broadcast draw");
-            e.printStackTrace();
-        }
-    }
+//    private void drawShape() {
+//
+//        graphics2D.setColor(color);
+//        graphics2D.setStroke(new BasicStroke(1));
+//        switch (Objects.requireNonNull(type).toString()) {
+//            case "line":
+//                graphics2D.drawLine(startX, startY, endX, endY);
+//                break;
+//            case "rectangle":
+//                graphics2D.drawRect(Math.min(startX, endX), Math.min(startY,endY), Math.abs(startX - endX), Math.abs(startY - endY));
+//                break;
+//            case "oval":
+//                graphics2D.drawOval(startX, startY, Math.abs(endX - startX), Math.abs(endY - startY));
+//                break;
+//            case "circle":
+//                int d = (int) Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+//                graphics2D.drawOval(startX, startY, d*2, d*2);
+//                break;
+//            case "text":
+//                // Handle text drawing logic here
+//                String text = JOptionPane.showInputDialog(frame, "Enter your text");
+//                if(text != null) {
+//                    Font font = new Font(null, Font.PLAIN, 20);
+//                    graphics2D.setFont(font);
+//                    graphics2D.drawString(text, endX, endY);
+//                }
+//                break;
+//            default:
+//                return;
+//        }
+//        recordDrawingDetails();
+//        try {
+//            ConnectionManager.broadcast(drawRecord);
+//        } catch (Exception e) {
+//            System.out.println("Error in broadcast draw");
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private void recordDrawingDetails() {
+//        JsonObject drawRecord = new JsonObject();
+//        drawRecord.addProperty("type", type.toString());
+//        drawRecord.addProperty("command", "draw");
+//        drawRecord.addProperty("startX", startX);
+//        drawRecord.addProperty("startY", startY);
+//        drawRecord.addProperty("endX", endX);
+//        drawRecord.addProperty("endY", endY);
+//        drawRecord.addProperty("color", color.getRGB());
+//        if ("text".equals(type)) {
+//            drawRecord.addProperty("text", JOptionPane.showInputDialog(frame, "Enter your text"));
+//            drawRecord.addProperty("fontSize", 20);
+//        }
+//        records.add(drawRecord);
+//    }
 
-    private void recordDrawingDetails() {
-        drawRecord.addProperty("type", type.toString());
-        drawRecord.addProperty("command", "draw");
-        drawRecord.addProperty("startX", startX);
-        drawRecord.addProperty("startY", startY);
-        drawRecord.addProperty("endX", endX);
-        drawRecord.addProperty("endY", endY);
-        drawRecord.addProperty("color", color.getRGB());
-        if ("text".equals(type)) {
-            drawRecord.addProperty("text", JOptionPane.showInputDialog(frame, "Enter your text"));
-            drawRecord.addProperty("fontSize", 20);
-        }
-        records.add(drawRecord);
-    }
-
-    public void setGraphic(Graphics g) {
-        this.graphics2D = (Graphics2D) g;
-    }
+//    public void setGraphic(Graphics g) {
+//        this.graphics2D = (Graphics2D) g;
+//    }
 }

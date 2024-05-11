@@ -46,7 +46,6 @@ public class ManagerBoard {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
         // Generated using JFormDesigner Educational license - Yuxin Ren
         managerBoard = new JFrame("White Board - MANAGER - " + name);
-        createBoardListener = new Listener(managerBoard);
         lineButton = new JButton();
         drawingBoard = new JPanel();
         menu = new JComboBox<>();
@@ -69,10 +68,11 @@ public class ManagerBoard {
         panelChat = new JPanel();
 
         canvas = new CanvasPainter();
+        createBoardListener = new Listener(managerBoard, canvas);
         canvas.setBackground(Color.white);
         canvas.addMouseListener(createBoardListener);
         canvas.addMouseMotionListener(createBoardListener);
-        createBoardListener.setGraphic(canvas.getGraphics());
+        //createBoardListener.setGraphic(canvas.getGraphics());
         //======== managerBoard ========
         {
             var managerBoardContentPane = managerBoard.getContentPane();
@@ -137,7 +137,7 @@ public class ManagerBoard {
 
                 //---- penButton ----
                 penButton.setText("pen");
-                ovalButton.setActionCommand("pen");
+                penButton.setActionCommand("pen");
                 penButton.addActionListener(createBoardListener);
                 panelButton.add(penButton, "cell 0 5");
 
