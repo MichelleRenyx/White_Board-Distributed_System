@@ -9,6 +9,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Objects;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -23,7 +24,7 @@ import net.miginfocom.swing.*;
  */
 public class ManagerBoard {
     public JFrame managerBoard;
-    public static StringWriter chatArea;
+    //public static StringWriter chatArea;
     static Listener createBoardListener;
     private String file = ".save/whiteboard";
     static ManagerBoard createMyBoard;
@@ -52,7 +53,10 @@ public class ManagerBoard {
         recButton = new JButton();
         circleButton = new JButton();
         scrollPane1 = new JScrollPane();
+
         userList = new JList();
+        userList.setListData(Server.users.toArray());
+
         ovalButton = new JButton();
         penButton = new JButton();
         textButton = new JButton();
@@ -235,16 +239,18 @@ public class ManagerBoard {
                 {
                     //---- chatTextArea ----
                     chatTextArea.setEditable(false);
+                    chatTextArea.setDisabledTextColor(Color.black);
                     scrollPane2.setViewportView(chatTextArea);
                 }
                 panelChat.add(scrollPane2);
                 scrollPane2.setBounds(120, 0, 345, 45);
-                panelChat.add(chatInputTextField);
+
                 chatInputTextField.setBounds(120, 52, 220, chatInputTextField.getPreferredSize().height);
+                panelChat.add(chatInputTextField);
 
                 //---- sendButton ----
                 sendButton.setText("SEND");
-                sendButton.addActionListener(createBoardListener);
+                sendButton.addActionListener(e -> sendListener(e));
                 panelChat.add(sendButton);
                 sendButton.setBounds(new Rectangle(new Point(347, 52), sendButton.getPreferredSize()));
 
@@ -272,6 +278,29 @@ public class ManagerBoard {
             managerBoard.setVisible(true);
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
+    }
+
+    private void sendListener(ActionEvent e) {
+        // TODO add your code here
+        String message =managerBoard.getName() + ": " + chatInputTextField.getText();
+        chatTextArea.append(message + "\n");
+
+        JsonObject newMessage = new JsonObject();
+        newMessage.addProperty("command", "chat");
+        newMessage.addProperty("message", message);
+        newMessage.addProperty("username", managerBoard.getName());
+
+        chatInputTextField.setText("");
+
+        for (int i = 0; i < Server.connections.size(); i++) {
+            Connection tt = Server.connections.get(i);
+            try {
+                tt.dataOutputStream.writeUTF(newMessage.toString()); // 发送 JSON 字符串
+                tt.dataOutputStream.flush(); // 刷新输出流，确保数据被发送
+            } catch (IOException e1) {
+                e1.printStackTrace(); // 打印出异常信息
+            }
+        }
     }
 
     private void menu(ActionEvent e) {
@@ -341,8 +370,9 @@ public class ManagerBoard {
 
 
 
-    private void textListener(ActionEvent e) {
-    }
+
+//    private void textListener(ActionEvent e) {
+//    }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
     // Generated using JFormDesigner Educational license - Yuxin Ren
@@ -352,13 +382,13 @@ public class ManagerBoard {
     private JButton recButton;
     private JButton circleButton;
     private JScrollPane scrollPane1;
-    private JList userList;
+    static JList<Object> userList;
     private JButton ovalButton;
     private JButton penButton;
     private JButton textButton;
     private JButton colorButton;
     private JScrollPane scrollPane2;
-    private JTextArea chatTextArea;
+    static JTextArea chatTextArea;
     private JButton eraserButton;
     private JButton clearButton;
     private JTextField chatInputTextField;
@@ -424,4 +454,5 @@ public class ManagerBoard {
             System.out.println("Error in ManagerBoard processFile readFile: " + e.getMessage());
         }
     }
+
 }

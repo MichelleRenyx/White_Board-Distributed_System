@@ -60,34 +60,29 @@ public class Connection extends Thread {
                         }
                         break;
                     case "request":
+                        JsonObject responseJson = new JsonObject();
                         String curName = receivedJson.get("username").getAsString();
                         if (Server.users.contains(curName)) {
-                            JsonObject responseJson = new JsonObject();
                             responseJson.addProperty("response", "no");
                             responseJson.addProperty("message", "Username already taken.");
-                            dataOutputStream.writeUTF(responseJson.toString());
                         } else {
                             int ans = ConnectionManager.checkin(curName);
                             if (ans == JOptionPane.YES_OPTION) {
                                 if (!Server.users.contains(curName)) {
                                     Server.users.add(curName);
-                                    JsonObject responseJson = new JsonObject();
                                     responseJson.addProperty("response", "yes");
                                     responseJson.addProperty("message", "Username successfully added.");
-                                    dataOutputStream.writeUTF(responseJson.toString());
                                 } else {
-                                    JsonObject responseJson = new JsonObject();
                                     responseJson.addProperty("response", "no");
                                     responseJson.addProperty("message", "Failed to add username. Already exists.");
-                                    dataOutputStream.writeUTF(responseJson.toString());
                                 }
                             } else {
-                                JsonObject responseJson = new JsonObject();
                                 responseJson.addProperty("response", "rejected");
                                 responseJson.addProperty("message", "Request rejected.");
-                                dataOutputStream.writeUTF(responseJson.toString());
+
                             }
                         }
+                        dataOutputStream.writeUTF(responseJson.toString());
                         dataOutputStream.flush();
                         break;
 
@@ -101,7 +96,7 @@ public class Connection extends Thread {
                         break label;
                     case "chat":
                         ConnectionManager.broadcast(receivedJson);
-                        ManagerBoard.chatArea.append("\n" + receivedJson.get("username").getAsString() + ": " + receivedJson.get("message").getAsString());
+                        ManagerBoard.chatTextArea.append("\n" + receivedJson.get("username").getAsString() + ": " + receivedJson.get("message").getAsString());
                         break;
                     case "clear":
                         ManagerBoard.canvas.removeAll();
