@@ -66,6 +66,8 @@ public class ConnectionGuest{
 
     public void launch() {
         try {
+
+            label:
             while (true) {
                 System.out.println("waiting for data");
                 String line = dataInputStream.readUTF();  // 读取服务器发送的数据
@@ -75,6 +77,8 @@ public class ConnectionGuest{
                 JsonObject receivedJson = parser.parse(line).getAsJsonObject();  // 解析接收到的 JSON 字符串
                 String command = receivedJson.get("command").getAsString();
                 System.out.println(command);// 获取命令类型
+
+
                 switch (command) {
                     case "draw":
                         // 更新画布
@@ -116,9 +120,10 @@ public class ConnectionGuest{
                         break;
                     case "clientout":
                         // 用户退出处理
+
                         String userLeft = receivedJson.get("username").getAsString();
                         JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, userLeft + " leaves");
-                        break;
+                        break label;
                     case "clear":
                         // 清空画布并重置记录
                         GuestBoard.canvas.removeAll();
@@ -128,6 +133,7 @@ public class ConnectionGuest{
                 }
             }
         } catch (IOException e) {
+            JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, "Disconnected from server.");
             System.out.println("Connection lost: " + e.getMessage());
         }
     }

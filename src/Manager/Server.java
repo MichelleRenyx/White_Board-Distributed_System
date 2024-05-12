@@ -13,7 +13,6 @@ public class Server {
     public static void launchServer(String address, int port, String username) {
         Connection c1 = null;
         ServerSocket server = null;
-        username = LoginBoard.name;
         users.add(username);
         try {
             server = new ServerSocket(port);

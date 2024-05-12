@@ -11,6 +11,8 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.StringWriter;
 
 public class GuestBoard {
@@ -253,9 +255,20 @@ public class GuestBoard {
 
             guestBoard.pack();
             guestBoard.setLocationRelativeTo(null);
-            guestBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            guestBoard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             guestBoard.setVisible(true);
-
+            guestBoard.addWindowListener(new WindowAdapter() {
+                /**
+                 * Invoked when a window is in the process of being closed.
+                 * The close operation can be overridden at this point.
+                 *
+                 * @param e
+                 */
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    exitApplication();
+                }
+            });
 
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
@@ -268,6 +281,26 @@ public class GuestBoard {
         } catch (Exception ex) {
             ex.printStackTrace();
             System.out.println("Error in GuestBoard initialize old records");
+        }
+    }
+
+    private void exitApplication() {
+        try {
+            JsonObject jsonOver = new JsonObject();
+            jsonOver.addProperty("command", "over");
+            String jsonString = new Gson().toJson(jsonOver);
+            connectionGuest.dataOutputStream.writeUTF(jsonString);
+            connectionGuest.dataOutputStream.flush();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connectionGuest.socket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.exit(0);
         }
     }
 
