@@ -64,26 +64,26 @@ public class Connection extends Thread {
                         String curName = receivedJson.get("username").getAsString();
                         if (Server.users.contains(curName)) {
                             responseJson.addProperty("response", "no");
-                            responseJson.addProperty("message", "Username already taken.");
+                            responseJson.addProperty("message", "Username" +curName+ "already taken.");
                         } else {
                             int ans = ConnectionManager.checkin(curName);
                             if (ans == JOptionPane.YES_OPTION) {
-                                if (!Server.users.contains(curName)) {
-                                    Server.users.add(curName);
-                                    responseJson.addProperty("response", "yes");
-                                    responseJson.addProperty("message", "Username successfully added.");
-                                } else {
-                                    responseJson.addProperty("response", "no");
-                                    responseJson.addProperty("message", "Failed to add username. Already exists.");
-                                }
+                                Server.users.add(curName);
+                                responseJson.addProperty("response", "yes");
+                                responseJson.addProperty("message", "Username " +curName+ "successfully added.");
+
                             } else {
                                 responseJson.addProperty("response", "rejected");
                                 responseJson.addProperty("message", "Request rejected.");
 
                             }
                         }
-                        dataOutputStream.writeUTF(responseJson.toString());
+                        String responseJsonString = new Gson().toJson(responseJson);
+                        System.out.println(responseJsonString);
+                        dataOutputStream.writeUTF(responseJsonString);
+                        System.out.println(dataOutputStream);
                         dataOutputStream.flush();
+                        System.out.println("Response sent successfully");
                         break;
 
                     case "draw":

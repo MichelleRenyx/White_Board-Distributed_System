@@ -20,6 +20,7 @@ public class JoinBoard {
     static ConnectionGuest connectionGuest;
     static int port;
     static String username;
+    static String name;
     static GuestBoard createMyBoard;
 
     public static void main(String[] args) {
@@ -36,7 +37,7 @@ public class JoinBoard {
             System.out.println("Guest launch by default.");
             address = "localhost";
             port = 6666;
-            username = "Guest";
+            username = "defaultGuest";
         }
 
         try {
@@ -64,7 +65,7 @@ public class JoinBoard {
 
     private void login(ActionEvent e) {
         // TODO add your code here
-        String name = textField.getText();
+        name = textField.getText();
         if (name.isEmpty()) {
             JOptionPane.showMessageDialog(myWhiteBoard, "Please enter a username.");
             return;
@@ -75,15 +76,20 @@ public class JoinBoard {
 
         try {
             String jsonString = new Gson().toJson(requestJson);
+            System.out.println(jsonString);
             connectionGuest.dataOutputStream.writeUTF(jsonString);
             connectionGuest.dataOutputStream.flush();
 
             // Wait for server response
+            System.out.println("Waiting for server response...");
             String responseJsonString = connectionGuest.dataInputStream.readUTF();
+            System.out.println(responseJsonString);
             JsonParser parser = new JsonParser();
             JsonObject responseJson = parser.parse(responseJsonString).getAsJsonObject();
             String responseStatus = responseJson.get("response").getAsString();
+            System.out.println(responseStatus);
             String message = responseJson.get("message").getAsString();
+            System.out.println(message);
 
             switch (responseStatus) {
                 case "no":

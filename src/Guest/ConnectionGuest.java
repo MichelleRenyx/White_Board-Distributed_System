@@ -21,8 +21,8 @@ public class ConnectionGuest{
 
         try {
             this.socket = socket;
-            dataInputStream = new DataInputStream(socket.getInputStream());
-            dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            dataInputStream = new DataInputStream(this.socket.getInputStream());
+            dataOutputStream = new DataOutputStream(this.socket.getOutputStream());
         } catch (IOException e) {
             System.out.println("Connection error: " + e.getMessage());
         }
@@ -32,10 +32,12 @@ public class ConnectionGuest{
         try {
             while (true) {
                 String line = dataInputStream.readUTF();  // 读取服务器发送的数据
+                System.out.println(line);
                 if (line == null) break;
                 JsonParser parser = new JsonParser();
                 JsonObject receivedJson = parser.parse(line).getAsJsonObject();  // 解析接收到的 JSON 字符串
-                String command = receivedJson.get("command").getAsString();  // 获取命令类型
+                String command = receivedJson.get("command").getAsString();
+                System.out.println(command);// 获取命令类型
                 switch (command) {
                     case "draw":
                         // 更新画布
@@ -63,7 +65,7 @@ public class ConnectionGuest{
                         break;
                     case "feedback":
                         // 反馈处理
-                        String feedback = receivedJson.get("status").getAsString();
+                        String feedback = receivedJson.get("response").getAsString();
                         if ("no".equals(feedback)) {
                             JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, "Username already taken.");
                         } else if ("yes".equals(feedback)) {

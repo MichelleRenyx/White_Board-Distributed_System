@@ -38,7 +38,7 @@ public class GuestBoard {
 
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
         // Generated using JFormDesigner Educational license - Yuxin Ren
-        guestBoard = new JFrame("White Board - MANAGER - " + name);
+        guestBoard = new JFrame("White Board - GUEST - " + name);
         lineButton = new JButton();
         drawingBoard = new JPanel();
         menu = new JComboBox<>();
