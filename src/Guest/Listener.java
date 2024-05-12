@@ -16,7 +16,7 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
     //JsonObject drawRecord = new JsonObject();
     Painter painter = new Painter();
     int startX, startY, endX, endY;
-    static Color color = Color.BLACK;
+    Color color = Color.BLACK;
     Object type = "line";
 
     public Listener() {
@@ -114,8 +114,8 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
         // Send the drawing to the server
         String jsonString = new Gson().toJson(drawRecord);
         try {
-            ConnectionGuest.dataOutputStream.writeUTF(jsonString);
-            ConnectionGuest.dataOutputStream.flush();
+            GuestBoard.connectionGuest.dataOutputStream.writeUTF(jsonString);
+            GuestBoard.connectionGuest.dataOutputStream.flush();
         } catch (Exception e) {
             System.out.println("Failed to send drawing to the server");
         }

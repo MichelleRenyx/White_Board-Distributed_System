@@ -10,17 +10,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class ConnectionGuest extends Thread{
+public class ConnectionGuest{
     public Socket socket;
 
     public DataInputStream dataInputStream = null;
-    public static DataOutputStream dataOutputStream = null;
-    String s;
-    String getS(){
-        return s;
-    }
+    public DataOutputStream dataOutputStream = null;
+
     public ConnectionGuest(Socket socket) {
-        s = "wait";
+
 
         try {
             this.socket = socket;
@@ -36,58 +33,55 @@ public class ConnectionGuest extends Thread{
             while (true) {
                 String line = dataInputStream.readUTF();  // 读取服务器发送的数据
                 if (line == null) break;
-
                 JsonParser parser = new JsonParser();
                 JsonObject receivedJson = parser.parse(line).getAsJsonObject();  // 解析接收到的 JSON 字符串
                 String command = receivedJson.get("command").getAsString();  // 获取命令类型
-
                 switch (command) {
                     case "draw":
                         // 更新画布
-                        GuestBoard.Listener.update(receivedJson);
-                        Guest.canvasPainter.repaint();
+                        GuestBoard.createBoardListener.update(receivedJson);
+                        GuestBoard.canvas.repaint();
                         break;
                     case "chat":
                         // 更新聊天区域
                         String message = receivedJson.get("message").getAsString();
-                        JoinBoard.joinBoard.append(message + "\n");
+                        JoinBoard.createMyBoard.chatTextArea.append(message + "\n");
                         break;
                     case "usersList":
                         // 更新用户列表
-                        JsonArray userList = receivedJson.getAsJsonArray("users");
-                        Join.gui.setListData(userList);
+                        if(JoinBoard.createMyBoard != null){
+                            JsonArray userList = receivedJson.get("usernames").getAsJsonArray();
+                            JoinBoard.createMyBoard.setListData(userList);
+                        }
                         break;
                     case "delete":
                         // 用户被删除的通知
                         String deletedUser = receivedJson.get("username").getAsString();
-                        JOptionPane.showMessageDialog(Join.gui.frame, deletedUser + " has been kicked out by the manager.");
-                        Join.gui.setListData(userList);  // 假设我们已更新用户列表
-                        break;
-                    case "kick":
-                        // 被踢出通知
-                        JOptionPane.showMessageDialog(Join.gui.frame, "You have been kicked out by the manager.");
+                        JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, deletedUser + " has been deleted.");
+                        JsonArray userList = receivedJson.get("usernames").getAsJsonArray();
+                        JoinBoard.createMyBoard.setListData(userList);
                         break;
                     case "feedback":
                         // 反馈处理
                         String feedback = receivedJson.get("status").getAsString();
                         if ("no".equals(feedback)) {
-                            JOptionPane.showMessageDialog(Join.gui.frame, "Username already taken.");
+                            JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, "Username already taken.");
                         } else if ("yes".equals(feedback)) {
-                            JOptionPane.showMessageDialog(Join.gui.frame, "Username successfully added.");
+                            JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, "Username successfully added.");
                         } else if ("rejected".equals(feedback)) {
-                            JOptionPane.showMessageDialog(Join.gui.frame, "Request rejected.");
+                            JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, "Request rejected.");
                         }
                         break;
                     case "clientout":
                         // 用户退出处理
                         String userLeft = receivedJson.get("username").getAsString();
-                        JOptionPane.showMessageDialog(Join.gui.frame, userLeft + " leaves");
+                        JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, userLeft + " leaves");
                         break;
                     case "new":
                         // 清空画布并重置记录
-                        Guest.canvasPointer.removeAll();
-                        Guest.canvasPointer.updateUI();
-                        Guest.Listener.clearRecord();
+                        GuestBoard.canvas.removeAll();
+                        GuestBoard.canvas.updateUI();
+                        GuestBoard.createBoardListener.clearRecords();
                         break;
                 }
             }
@@ -97,7 +91,4 @@ public class ConnectionGuest extends Thread{
     }
 
 
-    public void resetS() {
-        s = "wait";
-    }
 }

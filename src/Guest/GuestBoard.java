@@ -2,6 +2,8 @@ package Guest;
 
 
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.miginfocom.swing.MigLayout;
 
@@ -21,7 +23,15 @@ public class GuestBoard {
 
     private int width = 800, height = 600;
     public GuestBoard(ConnectionGuest connectionGuest, String guestName) {
+        this.connectionGuest = connectionGuest;
         initComponents(guestName);
+    }
+    public void setListData(JsonArray users){
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        for (int i = 0; i < users.size(); i++) {
+            listModel.addElement(users.get(i).getAsString());
+        }
+        userList.setModel(listModel);
     }
     private void initComponents(String name){
 
@@ -254,9 +264,12 @@ public class GuestBoard {
         jsonMsg.addProperty("command", "chat");
         jsonMsg.addProperty("username", guestBoard.getName());
         jsonMsg.addProperty("message", message);
+        chatTextArea.append("\n" + guestBoard.getName() + ": " + message);
+        chatInputTextField.setText("");
         try {
+            String jsonString = new Gson().toJson(jsonMsg);
             if(connectionGuest != null && connectionGuest.dataOutputStream != null){
-                connectionGuest.dataOutputStream.writeUTF(jsonMsg.toString());
+                connectionGuest.dataOutputStream.writeUTF(jsonString);
                 connectionGuest.dataOutputStream.flush();
             }
         } catch (Exception ex) {
@@ -273,8 +286,10 @@ public class GuestBoard {
 
         JsonObject clearCommand = new JsonObject();
         clearCommand.addProperty("command", "clear");
+        String jsonString = new Gson().toJson(clearCommand);
         try {
-            ConnectionManager.broadcast(clearCommand);
+            connectionGuest.dataOutputStream.writeUTF(jsonString);
+            connectionGuest.dataOutputStream.flush();
         } catch (Exception ex) {
             ex.printStackTrace();
             System.out.println("Error in ManagerBoard clearMethod");
@@ -282,9 +297,6 @@ public class GuestBoard {
     }
 
 
-
-//    private void textListener(ActionEvent e) {
-//    }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
     // Generated using JFormDesigner Educational license - Yuxin Ren
@@ -294,13 +306,13 @@ public class GuestBoard {
     private JButton recButton;
     private JButton circleButton;
     private JScrollPane scrollPane1;
-    private JList userList;
+    protected JList<String> userList;
     private JButton ovalButton;
     private JButton penButton;
     private JButton textButton;
     private JButton colorButton;
     private JScrollPane scrollPane2;
-    private JTextArea chatTextArea;
+    protected JTextArea chatTextArea;
     private JButton eraserButton;
     private JButton clearButton;
     private JTextField chatInputTextField;

@@ -37,23 +37,23 @@ public class Connection extends Thread {
                 switch (command) {
                     case "begin":
                         try {
+                            // Share Board Information
                             ArrayList<JsonObject> records = LoginBoard.createMyBoard.createBoardListener.getRecords();
+//
+//                            JsonObject drawRecords = new JsonObject();
+//                            drawRecords.add("records", new Gson().toJsonTree(records));
+                            ConnectionManager.broadcastBatch(records);
 
-                            JsonObject drawRecords = new JsonObject();
-                            drawRecords.add("records", new Gson().toJsonTree(records));
-                            ConnectionManager.broadcast(drawRecords);
-
-
+                            //Share User List
                             JsonObject userListJson = new JsonObject();
                             JsonArray usersArray = new JsonArray();
                             for (String userName : Server.users) {
                                 usersArray.add(userName);
                             }
                             userListJson.add("usernames", usersArray);
-
                             ConnectionManager.addUsers(userListJson);
-
                             ConnectionManager.broadcast(userListJson);
+
                         } catch (Exception e) {
                             e.printStackTrace();
                             System.out.println("Error in Connection begin");

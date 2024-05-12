@@ -282,7 +282,7 @@ public class ManagerBoard {
 
     private void sendListener(ActionEvent e) {
         // TODO add your code here
-        String message =managerBoard.getName() + ": " + chatInputTextField.getText();
+        String message = LoginBoard.name + ": " + chatInputTextField.getText();
         chatTextArea.append(message + "\n");
 
         JsonObject newMessage = new JsonObject();

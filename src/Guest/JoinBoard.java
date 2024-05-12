@@ -5,7 +5,7 @@ package Guest;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import jdk.jfr.Timespan;
+import com.google.gson.JsonParser;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -79,10 +79,12 @@ public class JoinBoard {
             connectionGuest.dataOutputStream.flush();
 
             // Wait for server response
-            String responseJsonString = connectionGuest.dataInputStream.readUTF();  // Assuming this is a blocking call that waits for a response
-            JsonObject responseJson = new Gson().fromJson(responseJsonString, JsonObject.class);
+            String responseJsonString = connectionGuest.dataInputStream.readUTF();
+            JsonParser parser = new JsonParser();
+            JsonObject responseJson = parser.parse(responseJsonString).getAsJsonObject();
             String responseStatus = responseJson.get("response").getAsString();
             String message = responseJson.get("message").getAsString();
+
             switch (responseStatus) {
                 case "no":
                     JOptionPane.showMessageDialog(myWhiteBoard, message);
@@ -90,16 +92,13 @@ public class JoinBoard {
                     break;
                 case "rejected":
                     JOptionPane.showMessageDialog(myWhiteBoard, message);
-                    if (responseStatus.equals("rejected")) {
-                        // Optionally close the socket if rejected
-                        try {
-                            connectionGuest.dataOutputStream.close();
-                            socket.close();
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                        System.exit(1);
+                    try {
+                        connectionGuest.dataOutputStream.close();
+                        socket.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
+                    System.exit(1);
                     break;
                 case "yes":
                     myWhiteBoard.dispose();
