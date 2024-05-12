@@ -2,6 +2,7 @@ package Guest;
 
 
 
+import Manager.LoginBoard;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -15,7 +16,7 @@ import java.io.StringWriter;
 public class GuestBoard {
     public JFrame guestBoard;
     static Listener createBoardListener;
-    private String file = ".save/whiteboard";
+
     static GuestBoard createMyBoard;
     static ConnectionGuest connectionGuest;
     static Painter canvas;
@@ -254,17 +255,29 @@ public class GuestBoard {
             guestBoard.setLocationRelativeTo(null);
             guestBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             guestBoard.setVisible(true);
+
+
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
+        JsonObject j = new JsonObject();
+        j.addProperty("command", "begin");
+        String jsonString = new Gson().toJson(j);
+        try {
+            connectionGuest.dataOutputStream.writeUTF(jsonString);
+            connectionGuest.dataOutputStream.flush();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("Error in GuestBoard initialize old records");
+        }
     }
 
     private void sendListener(ActionEvent e) {
         String message = chatInputTextField.getText();
         JsonObject jsonMsg = new JsonObject();
         jsonMsg.addProperty("command", "chat");
-        jsonMsg.addProperty("username", guestBoard.getName());
+        jsonMsg.addProperty("username", JoinBoard.name);
         jsonMsg.addProperty("message", message);
-        chatTextArea.append("\n" + guestBoard.getName() + ": " + message);
+//        chatTextArea.append("\n" + JoinBoard.name + ": " + message);
         chatInputTextField.setText("");
         try {
             String jsonString = new Gson().toJson(jsonMsg);

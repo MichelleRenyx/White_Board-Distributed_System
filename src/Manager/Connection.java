@@ -39,10 +39,11 @@ public class Connection extends Thread {
                         try {
                             // Share Board Information
                             ArrayList<JsonObject> records = LoginBoard.createMyBoard.createBoardListener.getRecords();
-//
-//                            JsonObject drawRecords = new JsonObject();
-//                            drawRecords.add("records", new Gson().toJsonTree(records));
-                            ConnectionManager.broadcastBatch(records);
+
+                            JsonObject drawRecords = new JsonObject();
+                            drawRecords.add("records", new Gson().toJsonTree(records));
+                            drawRecords.addProperty("command", "begin");
+                            ConnectionManager.broadcast(drawRecords);
 
                             //Share User List
                             JsonObject userListJson = new JsonObject();
@@ -51,6 +52,7 @@ public class Connection extends Thread {
                                 usersArray.add(userName);
                             }
                             userListJson.add("usernames", usersArray);
+                            userListJson.addProperty("command", "usersList");
                             ConnectionManager.addUsers(userListJson);
                             ConnectionManager.broadcast(userListJson);
 
@@ -102,12 +104,13 @@ public class Connection extends Thread {
                         break label;
                     case "chat":
                         ConnectionManager.broadcast(receivedJson);
-                        ManagerBoard.chatTextArea.append("\n" + receivedJson.get("username").getAsString() + ": " + receivedJson.get("message").getAsString());
+                        ManagerBoard.chatTextArea.append(receivedJson.get("username").getAsString() + ": " + receivedJson.get("message").getAsString() + "\n");
                         break;
                     case "clear":
                         ManagerBoard.canvas.removeAll();
                         ManagerBoard.canvas.update( ManagerBoard.canvas.getGraphics());
                         ManagerBoard.createBoardListener.clearRecords();
+                        //ConnectionManager.broadcast(receivedJson);
                         break;
                 }
 

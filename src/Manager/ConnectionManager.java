@@ -26,15 +26,6 @@ public class ConnectionManager {
             }
         }
     }
-    /*JsonObject drawCommand = new JsonObject();
-drawCommand.addProperty("type", "draw");
-drawCommand.addProperty("command", "line");
-drawCommand.addProperty("startX", 100);
-drawCommand.addProperty("startY", 100);
-drawCommand.addProperty("endX", 200);
-drawCommand.addProperty("endY", 200);
-drawCommand.addProperty("color", "red");*/
-
 
     public static void addUsers(JsonObject userListJson) {
         // Extracting user list from the JSON object

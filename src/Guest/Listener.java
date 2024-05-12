@@ -91,6 +91,8 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
      */
     @Override
     public void mouseReleased(MouseEvent e) {
+//        endX = e.getX();
+//        endY = e.getY();
         JsonObject drawRecord = new JsonObject();
         drawRecord.addProperty("type", type.toString());
         drawRecord.addProperty("command", "draw");
@@ -156,7 +158,37 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
      */
     @Override
     public void mouseDragged(MouseEvent e) {
+        endX = e.getX();
+        endY = e.getY();
+        JsonObject drawRecord = new JsonObject();
+        if(type.equals("pen")){
+            drawRecord.addProperty("type", "pen");
+            drawRecord.addProperty("color", color.getRGB());
+            drawRecord.addProperty("command", "draw");
+            drawRecord.addProperty("startX", startX);
+            drawRecord.addProperty("startY", startY);
+            drawRecord.addProperty("endX", endX);
+            drawRecord.addProperty("endY", endY);
+            startX = endX;
+            startY = endY;
+        } else if (type.equals("eraser")) {
 
+            drawRecord.addProperty("type", "line");
+            drawRecord.addProperty("color", Color.WHITE.getRGB());
+            drawRecord.addProperty("command", "draw");
+            drawRecord.addProperty("startX", startX);
+            drawRecord.addProperty("startY", startY);
+            drawRecord.addProperty("endX", endX);
+            drawRecord.addProperty("endY", endY);
+            startX = endX;
+            startY = endY;
+        } else {
+            return;
+        }
+        records.add(drawRecord);
+        painter.updateRecords(records);
+        painter.repaint();
+        sendDraw(drawRecord);
     }
 
     /**

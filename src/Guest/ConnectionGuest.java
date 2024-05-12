@@ -18,6 +18,8 @@ public class ConnectionGuest{
     private boolean loginResponseReceived = false;
     private String loginResponseStatus = null;
     private String loginResponseMessage = null;
+    private String otherName = null;
+    private String otherChat = null;
 
     // Synchronized methods for handling login response
     public synchronized void setLoginResponse(String status, String message) {
@@ -39,6 +41,16 @@ public class ConnectionGuest{
         return loginResponseStatus;
     }
 
+    public String getOtherName() {
+        return otherName;
+    }
+    public String getOtherChat() {
+        return otherChat;
+    }
+    public void setOtherChat(String otherName, String otherChat) {
+        this.otherName = otherName;
+        this.otherChat = otherChat;
+    }
     public ConnectionGuest(Socket socket) {
 
 
@@ -72,7 +84,15 @@ public class ConnectionGuest{
                     case "chat":
                         // 更新聊天区域
                         String message = receivedJson.get("message").getAsString();
-                        JoinBoard.createMyBoard.chatTextArea.append(message + "\n");
+                        JoinBoard.createMyBoard.chatTextArea.append(receivedJson.get("username").getAsString() + ": " + message + "\n");
+                        break;
+                    case "begin":
+                        // 初始化画布
+                        JsonArray rs = receivedJson.get("records").getAsJsonArray();
+                        for (int i = 0; i < rs.size(); i++) {
+                            GuestBoard.createBoardListener.update(rs.get(i).getAsJsonObject());
+                        }
+                        GuestBoard.canvas.repaint();
                         break;
                     case "usersList":
                         // 更新用户列表
@@ -81,13 +101,13 @@ public class ConnectionGuest{
                             JoinBoard.createMyBoard.setListData(userList);
                         }
                         break;
-                    case "delete":
-                        // 用户被删除的通知
-                        String deletedUser = receivedJson.get("username").getAsString();
-                        JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, deletedUser + " has been deleted.");
-                        JsonArray userList = receivedJson.get("usernames").getAsJsonArray();
-                        JoinBoard.createMyBoard.setListData(userList);
-                        break;
+//                    case "delete":
+//                        // 用户被删除的通知
+//                        String deletedUser = receivedJson.get("username").getAsString();
+//                        JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, deletedUser + " has been deleted.");
+//                        JsonArray userList = receivedJson.get("usernames").getAsJsonArray();
+//                        JoinBoard.createMyBoard.setListData(userList);
+//                        break;
                     case "feedback":
                         // 反馈处理
                         String response = receivedJson.get("response").getAsString();
@@ -99,7 +119,7 @@ public class ConnectionGuest{
                         String userLeft = receivedJson.get("username").getAsString();
                         JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, userLeft + " leaves");
                         break;
-                    case "new":
+                    case "clear":
                         // 清空画布并重置记录
                         GuestBoard.canvas.removeAll();
                         GuestBoard.canvas.updateUI();
