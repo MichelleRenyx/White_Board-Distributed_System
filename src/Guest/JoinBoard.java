@@ -48,6 +48,7 @@ public class JoinBoard {
             System.exit(1);
         }
         connectionGuest = new ConnectionGuest(socket);
+        System.out.println("Connected to server" + socket.getInetAddress().getHostAddress() + " " + socket.getPort());
         EventQueue.invokeLater(() -> {
             try {
                 new JoinBoard();
@@ -80,15 +81,15 @@ public class JoinBoard {
             connectionGuest.dataOutputStream.writeUTF(jsonString);
             connectionGuest.dataOutputStream.flush();
 
+            synchronized (connectionGuest) {
+                while (!connectionGuest.isLoginResponseReceived()) {
+                    connectionGuest.wait();  // 等待loginResponseReceived变为true
+                }
+            }
             // Wait for server response
-            System.out.println("Waiting for server response...");
-            String responseJsonString = connectionGuest.dataInputStream.readUTF();
-            System.out.println(responseJsonString);
-            JsonParser parser = new JsonParser();
-            JsonObject responseJson = parser.parse(responseJsonString).getAsJsonObject();
-            String responseStatus = responseJson.get("response").getAsString();
+            String responseStatus = connectionGuest.getLoginResponseStatus();
+            String message = connectionGuest.getLoginResponseMessage();
             System.out.println(responseStatus);
-            String message = responseJson.get("message").getAsString();
             System.out.println(message);
 
             switch (responseStatus) {
@@ -99,24 +100,35 @@ public class JoinBoard {
                 case "rejected":
                     JOptionPane.showMessageDialog(myWhiteBoard, message);
                     try {
-                        connectionGuest.dataOutputStream.close();
+                        connectionGuest.dataOutputStream.writeUTF("over");
+                        connectionGuest.dataOutputStream.flush();
                         socket.close();
+                        System.exit(1);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
-                    System.exit(1);
                     break;
                 case "yes":
                     myWhiteBoard.dispose();
-                    createMyBoard = new GuestBoard(connectionGuest, name);
+                    try {
+                        if(createMyBoard == null) {
+                            createMyBoard = new GuestBoard(connectionGuest, name);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
                     break;
                 default:
                     JOptionPane.showMessageDialog(myWhiteBoard, "Unexpected response, please try again.");
+                    myWhiteBoard.dispose();
                     break;
             }
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(myWhiteBoard, "Failed to communicate with server: " + ex.getMessage());
             ex.printStackTrace();
+        } catch (InterruptedException ex) {
+            JOptionPane.showMessageDialog(myWhiteBoard, "Failed to communicate with server: " + ex.getMessage());
+            throw new RuntimeException(ex);
         }
     }
     public void initComponents() {

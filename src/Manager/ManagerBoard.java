@@ -39,6 +39,7 @@ public class ManagerBoard {
     }
 
     public int showRequest(String guestName) {
+        System.out.println("Accept user " + guestName + "?");
         return JOptionPane.showConfirmDialog(null, "Accept user " + guestName + "?", "User Connection Request", JOptionPane.YES_NO_OPTION);
     }
     private void initComponents(String name){

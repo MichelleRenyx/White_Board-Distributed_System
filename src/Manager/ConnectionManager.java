@@ -55,6 +55,7 @@ drawCommand.addProperty("color", "red");*/
     }
 
     public static int checkin(String curName) {
+        System.out.println("Checking in: " + curName);
         return LoginBoard.createMyBoard.showRequest(curName);
     }
 

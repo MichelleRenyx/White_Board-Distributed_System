@@ -63,16 +63,22 @@ public class Connection extends Thread {
                         JsonObject responseJson = new JsonObject();
                         String curName = receivedJson.get("username").getAsString();
                         if (Server.users.contains(curName)) {
+                            responseJson.addProperty("command", "feedback");
                             responseJson.addProperty("response", "no");
                             responseJson.addProperty("message", "Username" +curName+ "already taken.");
                         } else {
                             int ans = ConnectionManager.checkin(curName);
-                            if (ans == JOptionPane.YES_OPTION) {
+                            System.out.println("ans: " + ans);
+                            if (ans == 0) {
                                 Server.users.add(curName);
+                                responseJson.addProperty("command", "feedback");
+
                                 responseJson.addProperty("response", "yes");
                                 responseJson.addProperty("message", "Username " +curName+ "successfully added.");
 
                             } else {
+                                responseJson.addProperty("command", "feedback");
+
                                 responseJson.addProperty("response", "rejected");
                                 responseJson.addProperty("message", "Request rejected.");
 

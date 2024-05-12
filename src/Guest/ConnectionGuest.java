@@ -15,6 +15,29 @@ public class ConnectionGuest{
 
     public DataInputStream dataInputStream = null;
     public DataOutputStream dataOutputStream = null;
+    private boolean loginResponseReceived = false;
+    private String loginResponseStatus = null;
+    private String loginResponseMessage = null;
+
+    // Synchronized methods for handling login response
+    public synchronized void setLoginResponse(String status, String message) {
+        this.loginResponseStatus = status;
+        this.loginResponseMessage = message;
+        this.loginResponseReceived = true;
+        notifyAll();  // Notify waiting threads that login response has been received
+    }
+
+    public boolean isLoginResponseReceived() {
+        return loginResponseReceived;
+    }
+
+    public String getLoginResponseMessage() {
+        return loginResponseMessage;
+    }
+
+    public String getLoginResponseStatus() {
+        return loginResponseStatus;
+    }
 
     public ConnectionGuest(Socket socket) {
 
@@ -22,6 +45,7 @@ public class ConnectionGuest{
         try {
             this.socket = socket;
             dataInputStream = new DataInputStream(this.socket.getInputStream());
+            System.out.println("flag" + dataInputStream);
             dataOutputStream = new DataOutputStream(this.socket.getOutputStream());
         } catch (IOException e) {
             System.out.println("Connection error: " + e.getMessage());
@@ -31,6 +55,7 @@ public class ConnectionGuest{
     public void launch() {
         try {
             while (true) {
+                System.out.println("waiting for data");
                 String line = dataInputStream.readUTF();  // 读取服务器发送的数据
                 System.out.println(line);
                 if (line == null) break;
@@ -65,14 +90,9 @@ public class ConnectionGuest{
                         break;
                     case "feedback":
                         // 反馈处理
-                        String feedback = receivedJson.get("response").getAsString();
-                        if ("no".equals(feedback)) {
-                            JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, "Username already taken.");
-                        } else if ("yes".equals(feedback)) {
-                            JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, "Username successfully added.");
-                        } else if ("rejected".equals(feedback)) {
-                            JOptionPane.showMessageDialog(JoinBoard.createMyBoard.guestBoard, "Request rejected.");
-                        }
+                        String response = receivedJson.get("response").getAsString();
+                        String m = receivedJson.get("message").getAsString();
+                        setLoginResponse(response, m);
                         break;
                     case "clientout":
                         // 用户退出处理
