@@ -13,8 +13,10 @@ public class ConnectionManager {
         System.out.println("Broadcasting: " + message.toString());
         String messageString = new Gson().toJson(message);
         for (Connection st : Server.connections) {
-            st.dataOutputStream.writeUTF(messageString);
-            st.dataOutputStream.flush();
+            if (!st.socket.isClosed()) {
+                st.dataOutputStream.writeUTF(messageString);
+                st.dataOutputStream.flush();
+            }
         }
     }
     public static void broadcastBatch(ArrayList<JsonObject> recordList) throws IOException {

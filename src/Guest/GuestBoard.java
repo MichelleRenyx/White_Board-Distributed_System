@@ -288,7 +288,9 @@ public class GuestBoard {
         try {
             JsonObject jsonOver = new JsonObject();
             jsonOver.addProperty("command", "over");
+            jsonOver.addProperty("username", JoinBoard.name);
             String jsonString = new Gson().toJson(jsonOver);
+            System.out.println(jsonString);
             connectionGuest.dataOutputStream.writeUTF(jsonString);
             connectionGuest.dataOutputStream.flush();
         }

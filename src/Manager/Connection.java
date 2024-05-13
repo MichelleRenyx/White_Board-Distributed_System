@@ -15,7 +15,6 @@ public class Connection extends Thread {
     public String name;
     public DataInputStream dataInputStream;
     public DataOutputStream dataOutputStream;
-    private boolean removeUser;
 
     public Connection(Socket socket) {
         this.socket = socket;
@@ -25,11 +24,10 @@ public class Connection extends Thread {
         try {
             dataInputStream = new DataInputStream(socket.getInputStream());
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            System.out.println("User connected "+ socket.getInetAddress().getHostAddress() + " " + socket.getPort());
+            System.out.println("User connected " + socket.getInetAddress().getHostAddress() + " " + socket.getPort());
             JsonParser parser = new JsonParser();
 
             String line;
-            label:
             while ((line = dataInputStream.readUTF()) != null) {
                 JsonObject receivedJson = parser.parse(line).getAsJsonObject();  // 使用 parse 方法
                 String command = receivedJson.get("command").getAsString();
@@ -67,7 +65,7 @@ public class Connection extends Thread {
                         if (Server.users.contains(curName)) {
                             responseJson.addProperty("command", "feedback");
                             responseJson.addProperty("response", "no");
-                            responseJson.addProperty("message", "Username" +curName+ "already taken.");
+                            responseJson.addProperty("message", "Username" + curName + "already taken.");
                         } else {
                             int ans = ConnectionManager.checkin(curName);
                             System.out.println("ans: " + ans);
@@ -76,7 +74,7 @@ public class Connection extends Thread {
                                 responseJson.addProperty("command", "feedback");
 
                                 responseJson.addProperty("response", "yes");
-                                responseJson.addProperty("message", "Username " +curName+ "successfully added.");
+                                responseJson.addProperty("message", "Username " + curName + "successfully added.");
 
                             } else {
                                 responseJson.addProperty("command", "feedback");
@@ -100,15 +98,18 @@ public class Connection extends Thread {
                         ConnectionManager.canvasRepaint(receivedJson);
                         break;
                     case "over":
+                        String leavingUser = receivedJson.get("username").getAsString();
                         socket.close();
-                        break label;
+                        this.name = leavingUser;
+                        System.out.println("User" + this.name + "'s socket is closed");
+                        break;
                     case "chat":
                         ConnectionManager.broadcast(receivedJson);
                         ManagerBoard.chatTextArea.append(receivedJson.get("username").getAsString() + ": " + receivedJson.get("message").getAsString() + "\n");
                         break;
                     case "clear":
                         ManagerBoard.canvas.removeAll();
-                        ManagerBoard.canvas.update( ManagerBoard.canvas.getGraphics());
+                        ManagerBoard.canvas.update(ManagerBoard.canvas.getGraphics());
                         ManagerBoard.createBoardListener.clearRecords();
                         //ConnectionManager.broadcast(receivedJson);
                         break;
@@ -117,9 +118,8 @@ public class Connection extends Thread {
             }
         } catch (SocketException e) {
             System.out.println("User" + this.name + " disconnected");
-            if (!this.removeUser) {
-                clientLeave();
-            }
+            clientLeave();
+
         } catch (IOException e) {
             System.out.println("User" + this.name + " disconnected");
         }
@@ -130,8 +130,8 @@ public class Connection extends Thread {
         // Remove the client and their information
         JsonObject message = new JsonObject();
         message.addProperty("command", "clientout");
-        message.addProperty("username", name);
-        message.addProperty("message", name + " has left the board.");
+        message.addProperty("username", this.name);
+        message.addProperty("message", this.name + " has left the board.");
         try {
             ConnectionManager.broadcast(message);
         } catch (Exception e) {

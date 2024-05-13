@@ -100,10 +100,12 @@ public class JoinBoard {
                 case "rejected":
                     JOptionPane.showMessageDialog(myWhiteBoard, message);
                     try {
-                        connectionGuest.dataOutputStream.writeUTF("over");
+                        JsonObject overJson = new JsonObject();
+                        overJson.addProperty("command", "over");
+                        overJson.addProperty("username", name);
+                        String overJsonString = new Gson().toJson(overJson);
+                        connectionGuest.dataOutputStream.writeUTF(overJsonString);
                         connectionGuest.dataOutputStream.flush();
-                        socket.close();
-                        System.exit(1);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }

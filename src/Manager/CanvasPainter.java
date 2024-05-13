@@ -17,7 +17,7 @@ public class CanvasPainter extends JPanel {
         this.recordList = recordList;
     }
     public void draw(Graphics2D graphics2D, ArrayList<JsonObject> jsonObjectArrayList){
-        for (JsonObject record : recordList) {
+        for (JsonObject record : jsonObjectArrayList) {
             String type = record.get("type").getAsString();
             Stroke stroke = new BasicStroke(5);
             Color color = new Color(record.get("color").getAsInt());
