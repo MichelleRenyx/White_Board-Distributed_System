@@ -410,12 +410,12 @@ public class ManagerBoard {
         g.setColor(Color.white);
         g.fillRect(0, 0, width, height);
 
-        //canvas.draw(g, createBoardListener.getRecords());
+        canvas.draw(g, createBoardListener.getRecords());
         try {
             // 根据用户选择的格式保存图像
-            if (type.equals("jpg")) {
+            if (type.equals(".jpg")) {
                 ImageIO.write(targetImg, "JPEG", new File("./" + filename + ".jpg"));
-            } else if (type.equals("png")) {
+            } else if (type.equals(".png")) {
                 ImageIO.write(targetImg, "PNG", new File("./" + filename + ".png"));
             } else {
                 System.out.println("Not Support File Type：" + type);
