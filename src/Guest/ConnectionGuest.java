@@ -1,5 +1,6 @@
 package Guest;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -63,6 +64,7 @@ public class ConnectionGuest{
             System.out.println("Connection error: " + e.getMessage());
         }
     }
+
 
     public void launch() {
         try {

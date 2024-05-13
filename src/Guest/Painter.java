@@ -13,6 +13,10 @@ public class Painter extends JPanel {
         super.paint(g);
         draw( (Graphics2D) g, this.recordList);
     }
+    public void addRecord(JsonObject record) {
+        this.recordList.add(record);
+        repaint();  // 重绘画布以反映新添加的记录
+    }
     public void updateRecords(ArrayList<JsonObject> recordList) {
         this.recordList = recordList;
     }

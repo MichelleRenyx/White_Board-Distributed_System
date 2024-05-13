@@ -116,6 +116,7 @@ public class JoinBoard {
                         if(createMyBoard == null) {
                             createMyBoard = new GuestBoard(connectionGuest, name);
                         }
+
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }

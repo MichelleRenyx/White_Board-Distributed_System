@@ -34,14 +34,12 @@ public class Listener implements ActionListener, MouseListener, MouseMotionListe
         painter.repaint();
     }
 
-    public ArrayList<JsonObject> getRecords() {
-        return records;
-    }
+
 
     public void update(JsonObject drawRecord) {
         // Update the canvas with the new drawing
         System.out.println("Updating canvas " + drawRecord);
-        records.add(drawRecord);
+        GuestBoard.canvas.addRecord(drawRecord);
     }
 
 
