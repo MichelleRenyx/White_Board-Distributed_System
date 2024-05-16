@@ -13,7 +13,7 @@ public class Server {
     public static void launchServer(String address, int port, String username) {
         Connection c1 = null;
         ServerSocket server = null;
-        users.add(username);
+        //users.add(username);
         try {
             server = new ServerSocket(port);
             Socket client;
@@ -30,5 +30,8 @@ public class Server {
             System.out.println("connection error");
             System.exit(1);
         }
+    }
+    public static void addUser(String username) {
+        users.add(username);
     }
 }

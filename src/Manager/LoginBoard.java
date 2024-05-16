@@ -54,6 +54,7 @@ public class LoginBoard {
     private void login(ActionEvent e) {
         // TODO add your code here
         name = textField.getText();
+        Server.addUser(name);
         myWhiteBoard.dispose();
         try {
             createMyBoard = new ManagerBoard(name);
