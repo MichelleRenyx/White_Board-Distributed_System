@@ -205,7 +205,7 @@ public class GuestBoard {
                 {
                     scrollPane1.setViewportView(userList);
                 }
-                panelRight.add(scrollPane1, "cell 0 1");
+                panelRight.add(scrollPane1, "cell 0 1, wmin 100, hmin 200");
             }
             guestBoardContentPane.add(panelRight, "cell 2 2");
 
